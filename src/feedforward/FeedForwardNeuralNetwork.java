@@ -1,5 +1,6 @@
 package feedforward;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,6 +19,11 @@ public class FeedForwardNeuralNetwork
     private int[] sizes;
     private int biggestSize;
     private ActivationFunction activationFunction;
+
+    public FeedForwardNeuralNetwork(File file) throws IOException
+    {
+        this(getJSONFromFile(file));
+    }
 
     public FeedForwardNeuralNetwork(JSONObject net)
     {
@@ -74,7 +80,7 @@ public class FeedForwardNeuralNetwork
                 weights = new double[totalWeights];
                 for(int k = 0; k < totalWeights; k++)
                 {
-                    weights[k] = sizeArray.getInt(k);
+                    weights[k] = weightArray.getDouble(k);
                 }
             }
             else
@@ -129,6 +135,12 @@ public class FeedForwardNeuralNetwork
         }
     }
 
+    private static JSONObject getJSONFromFile(File file) throws IOException
+    {
+        String input = FileUtils.readFileToString(file);
+        return new JSONObject(input);
+    }
+
     public JSONObject export()
     {
         JSONObject net = new JSONObject();
@@ -148,5 +160,7 @@ public class FeedForwardNeuralNetwork
 
         BufferedWriter out = new BufferedWriter(new PrintWriter(new FileWriter(file)));
         out.write(net.toString(4));
+        out.close();
     }
+
 }
