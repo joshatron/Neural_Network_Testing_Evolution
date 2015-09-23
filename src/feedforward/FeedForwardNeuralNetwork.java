@@ -19,6 +19,7 @@ public class FeedForwardNeuralNetwork
     private int[] sizes;
     private int biggestSize;
     private ActivationFunction activationFunction;
+    private double biasNum = 1.;
 
     public FeedForwardNeuralNetwork(File file) throws IOException
     {
@@ -163,4 +164,90 @@ public class FeedForwardNeuralNetwork
         out.close();
     }
 
+    public double[] compute(double[] inputs)
+    {
+        if(inputs.length != sizes[0])
+        {
+            System.out.println("Invalid number of inputs");
+            return null;
+        }
+
+        int lastLayer = sizes[0];
+        double[] layerOut = new double[biggestSize];
+        for(int k = 0; k < lastLayer; k++)
+        {
+            layerOut[k] = inputs[k];
+        }
+
+        for(int k = 1; k < hiddenLayers + 2; k++)
+        {
+            double[] tempOut = new double[sizes[k]];
+            for(int a = 0; a < sizes[k]; a++)
+            {
+                double sum = 0;
+                for(int t = 0; t < lastLayer; t++)
+                {
+                    sum += layerOut[t] * getWeight(k - 1, t, k, a);
+                }
+                sum += biasNum * getWeight(-1, 0, k, a);
+                tempOut[a] = applyActivationFunction(sum);
+            }
+            lastLayer = sizes[k];
+            for(int a = 0; a < lastLayer; a++)
+            {
+                layerOut[a] = tempOut[a];
+            }
+        }
+
+        return layerOut;
+    }
+
+    private double getWeight(int layerStart, int start, int layerEnd, int end)
+    {
+        if(layerStart != -1)
+        {
+            int index = 0;
+            for(int k = 0; k < layerStart; k++)
+            {
+                index += sizes[k] * sizes[k + 1];
+            }
+
+            index += start * sizes[layerEnd];
+            index += end;
+
+            return weights[index];
+        }
+        else
+        {
+            int index = 0;
+            for(int k = 0; k < hiddenLayers + 1; k++)
+            {
+                index += sizes[k] * sizes[k + 1];
+            }
+
+            for(int k = 0; k < layerEnd; k++)
+            {
+                index += sizes[k];
+            }
+
+            index += end;
+
+            return weights[index];
+        }
+    }
+
+    private double applyActivationFunction(double sum)
+    {
+        switch(activationFunction)
+        {
+            case LINEAR:
+                double slope = 1.0;
+                return slope * sum;
+            case LOGISTIC:
+                return 1.0 / (1.0 * Math.pow(Math.E, sum * -1.0));
+        }
+
+        System.out.println("Failed to apply activation function");
+        return -9999;
+    }
 }
