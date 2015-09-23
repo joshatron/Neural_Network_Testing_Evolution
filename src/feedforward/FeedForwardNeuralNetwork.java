@@ -3,6 +3,7 @@ package feedforward;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.*;
 import java.util.Random;
 
 /**
@@ -126,5 +127,26 @@ public class FeedForwardNeuralNetwork
         {
             weights[k] = lowest + ((highest - lowest) * rand.nextDouble());
         }
+    }
+
+    public JSONObject export()
+    {
+        JSONObject net = new JSONObject();
+        net.put("momentum", momentum);
+        net.put("learningRate", learningRate);
+        net.put("hiddenLayers", hiddenLayers);
+        net.put("activationFunction", activationFunction.name());
+        net.put("sizes", new JSONArray(sizes));
+        net.put("weights", new JSONArray(weights));
+
+        return net;
+    }
+
+    public void export(File file) throws IOException
+    {
+        JSONObject net = export();
+
+        BufferedWriter out = new BufferedWriter(new PrintWriter(new FileWriter(file)));
+        out.write(net.toString(4));
     }
 }
