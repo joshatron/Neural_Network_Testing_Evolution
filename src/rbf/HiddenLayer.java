@@ -2,23 +2,24 @@ package rbf;
 
 public class HiddenLayer
 {
-    private int[] weights;
+    private double[] weights;
 
-    private int[] exampleValues;
+    private double[] exampleValues;
 
-    public HiddenLayer(int[] values)
+    public HiddenLayer(double[] values)
     {
+        weights = new double[values.length];
         // randomly create all of the weights
         for (int i = 0; i < values.length; i++)
         {
-            weights[i] = (int) (Math.random() * 100);
+            weights[i] =  (Math.random() * 100);
         }
         this.exampleValues = values;
     }
 
-    public int activationFunction(int[] inputs)
+    public double activationFunction(double[] inputs)
     {
-        int totalValue = 0;
+        double totalValue = 0;
         for (int i = 0; i < inputs.length; i++)
         {
             totalValue += getResult(inputs[i], this.weights[i], this.exampleValues[i]);
@@ -27,9 +28,9 @@ public class HiddenLayer
         return totalValue;
     }
 
-    public int getResult(int input, int weight, int example)
+    private double getResult(double input, double weight, double example)
     {
-        int result = 0;
+        double result = 0;
 
         result = input - example;
 
