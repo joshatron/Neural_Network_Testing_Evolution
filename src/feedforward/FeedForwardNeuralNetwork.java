@@ -9,6 +9,17 @@ import java.util.Random;
 
 /**
  * Created by joshua on 9/22/15.
+ * This class creates a fully connected feedforward neural network
+ * with a variable number of hidden layers.
+ * It can be imported and exported through the JSON format to make
+ * saving the net much easier. There is also a regular constructor
+ * which will create the net with random weights.
+ * The net can currently use 2 different activation functions,
+ * a linear function with a slope of 1 and the logistic function.
+ * The net handles all learning. Pass it an array of JSON examples
+ * and it will perform backprop once on each example. You can adjust
+ * the momentum and learning rate when you construct the net.
+ * Each node is connected to a bias node which has a value of 1.
  */
 public class FeedForwardNeuralNetwork
 {
@@ -21,11 +32,20 @@ public class FeedForwardNeuralNetwork
     private ActivationFunction activationFunction;
     private double biasNum = 1.;
 
+    /**
+     * Creates the net from a JSON file
+     * @param file The file containing the JSON
+     * @throws IOException
+     */
     public FeedForwardNeuralNetwork(File file) throws IOException
     {
         this(getJSONFromFile(file));
     }
 
+    /**
+     * Creates net from string containing JSON
+     * @param net the string containing the JSON
+     */
     public FeedForwardNeuralNetwork(JSONObject net)
     {
         momentum = net.getDouble("momentum");
@@ -95,6 +115,14 @@ public class FeedForwardNeuralNetwork
         }
     }
 
+    /**
+     * Initialize a new net with the following parameters and random weights
+     * @param hiddenLayers Number of hidden layers
+     * @param sizes Size of each layer, starting with the input and ending with the output
+     * @param activationFunction Activation function to use
+     * @param momentum Momentum for learning
+     * @param learningRate Learning rate
+     */
     public FeedForwardNeuralNetwork(int hiddenLayers, int[] sizes, ActivationFunction activationFunction, double momentum, double learningRate)
     {
         this.hiddenLayers = hiddenLayers;
@@ -115,8 +143,14 @@ public class FeedForwardNeuralNetwork
         generateRandomWeights();
     }
 
+    /**
+     * Fills all the weights with random numbers between -1 and 1
+     */
     private void generateRandomWeights()
     {
+        int lowest = -1;
+        int highest = 1;
+
         int totalWeights = 0;
         for(int k = 0; k < sizes.length - 1; k++)
         {
@@ -125,8 +159,6 @@ public class FeedForwardNeuralNetwork
         }
         totalWeights += sizes[sizes.length - 1];
 
-        int lowest = -1;
-        int highest = 1;
         Random rand = new Random();
         weights = new double[totalWeights];
 
@@ -136,12 +168,22 @@ public class FeedForwardNeuralNetwork
         }
     }
 
+    /**
+     * Puts JSON file contents into a string
+     * @param file File containing JSON
+     * @return String containing JSON
+     * @throws IOException
+     */
     private static JSONObject getJSONFromFile(File file) throws IOException
     {
         String input = FileUtils.readFileToString(file);
         return new JSONObject(input);
     }
 
+    /**
+     * Turns the net into a JSON string
+     * @return The JSON string
+     */
     public JSONObject export()
     {
         JSONObject net = new JSONObject();
@@ -155,6 +197,11 @@ public class FeedForwardNeuralNetwork
         return net;
     }
 
+    /**
+     * Turns the net into a JSON string and saves it to a file
+     * @param file File to save JSON to
+     * @throws IOException
+     */
     public void export(File file) throws IOException
     {
         JSONObject net = export();
@@ -164,6 +211,11 @@ public class FeedForwardNeuralNetwork
         out.close();
     }
 
+    /**
+     * Compute output nodes based on input
+     * @param inputs Values for input layer
+     * @return Values of the output layer
+     */
     public double[] compute(double[] inputs)
     {
         if(inputs.length != sizes[0])
@@ -202,7 +254,43 @@ public class FeedForwardNeuralNetwork
         return layerOut;
     }
 
+    /**
+     * Gets weight between 2 nodes
+     * @param layerStart Starting layer, -1 for bias node
+     * @param start Node number in the starting layer
+     * @param layerEnd Ending layer, should be one more than the start layer
+     * @param end Node number in the ending layer
+     * @return The value of the weight
+     */
     private double getWeight(int layerStart, int start, int layerEnd, int end)
+    {
+        int index = getIndex(layerStart, start, layerEnd, end);
+        return weights[index];
+    }
+
+    /**
+     * Sets a new weight between 2 nodes
+     * @param layerStart Starting layer, -1 for bias node
+     * @param start Node number in the starting layer
+     * @param layerEnd Ending layer, should be one more than the start layer
+     * @param end Node number in the ending layer
+     * @param newWeight New weight between the nodes
+     */
+    private void setWeight(int layerStart, int start, int layerEnd, int end, double newWeight)
+    {
+        int index = getIndex(layerStart, start, layerEnd, end);
+        weights[index] = newWeight;
+    }
+
+    /**
+     * Gets the index of the 1-d array that represents the weight between the 2 nodes
+     * @param layerStart Starting layer, -1 for bias node
+     * @param start Node number in the starting layer
+     * @param layerEnd Ending layer, should be one more than the start layer
+     * @param end Node number in the ending layer
+     * @return The index where the weight is
+     */
+    private int getIndex(int layerStart, int start, int layerEnd, int end)
     {
         if(layerStart != -1)
         {
@@ -215,7 +303,7 @@ public class FeedForwardNeuralNetwork
             index += start * sizes[layerEnd];
             index += end;
 
-            return weights[index];
+            return index;
         }
         else
         {
@@ -232,10 +320,15 @@ public class FeedForwardNeuralNetwork
 
             index += end;
 
-            return weights[index];
+            return index;
         }
     }
 
+    /**
+     * Applies the relevant activation function to the sum of a node
+     * @param sum The value to plug into the function
+     * @return The value returned by applying the function to the value
+     */
     private double applyActivationFunction(double sum)
     {
         switch(activationFunction)
