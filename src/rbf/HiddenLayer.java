@@ -3,10 +3,11 @@ package rbf;
 public class HiddenLayer
 {
     private double[] weights;
-
     private double[] exampleValues;
+    private double result;
+    private double sigma = 0.5;
 
-    public HiddenLayer(double[] values)
+    public HiddenLayer(double[] values, double result)
     {
         weights = new double[values.length];
         // randomly create all of the weights
@@ -15,15 +16,23 @@ public class HiddenLayer
             weights[i] =  (Math.random() * 100);
         }
         this.exampleValues = values;
+        this.result = result;
     }
 
     public double activationFunction(double[] inputs)
     {
         double totalValue = 0;
+        double totalWeights = 0;
         for (int i = 0; i < inputs.length; i++)
         {
-            totalValue += getResult(inputs[i], this.weights[i], this.exampleValues[i]);
+            // exp( -1/2sigma * (|| xi - xj || ) ^ 2) * wi
+            totalValue += this.weights[i] * Math.exp(-1 * (0.5 / this.sigma) * (inputs[i] - this.exampleValues[i]) * (inputs[i] - this.exampleValues[i]));
+            totalWeights += this.weights[i];
         }
+
+        totalValue /= totalWeights;
+
+        totalValue = totalValue * this.result;
 
         return totalValue;
     }
