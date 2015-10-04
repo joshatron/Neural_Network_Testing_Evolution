@@ -4,16 +4,17 @@ public class RBFNeuralNetwork
 {
     HiddenLayer[] hiddenNodes;
 
-    public void createTrainingData(int size)
+    public void createTrainingData(int size, int n)
     {
         this.hiddenNodes = new HiddenLayer[size];
 
         for (int i = 0; i < size; i++)
         {
-            double x1 = Math.random() * 100;
-            double x2 = Math.random() * 100;
-            double x3 = Math.random() * 100;
-            double[] inputs = {x1, x2, x3};
+            double[] inputs = new double[n];
+            for (int j = 0; j < n; j++)
+            {
+                inputs[j] = Math.random() * 100;
+            }
 
             double y = findCorrectAnswer(inputs);
             this.hiddenNodes[i] = new HiddenLayer(inputs);
