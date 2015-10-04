@@ -31,6 +31,9 @@ public class FeedForwardNeuralNetwork
     private int biggestSize;
     private ActivationFunction activationFunction;
     private double biasNum = 1.;
+    private double linearSlope = 1.;
+
+    private double[] lastDeltas;
 
     /**
      * Creates the net from a JSON file
@@ -113,6 +116,8 @@ public class FeedForwardNeuralNetwork
         {
             generateRandomWeights();
         }
+
+        lastDeltas = new double[weights.length];
     }
 
     /**
@@ -141,6 +146,7 @@ public class FeedForwardNeuralNetwork
         }
 
         generateRandomWeights();
+        lastDeltas = new double[weights.length];
     }
 
     /**
@@ -255,6 +261,84 @@ public class FeedForwardNeuralNetwork
     }
 
     /**
+     * Given an example with the inputs and expected outputs, teaches the nets
+     * @param inputs the inputs for the example
+     * @param expectedOutputs what the outputs should be
+     */
+    public void backprop(double[] inputs, double[] expectedOutputs)
+    {
+        if(inputs.length != sizes[0])
+        {
+            System.out.println("Invalid number of inputs");
+            return;
+        }
+
+        if(expectedOutputs.length != sizes[sizes.length - 1])
+        {
+            System.out.println("Invalid number of outputs");
+            return;
+        }
+
+        double[][] allOutputs = new double[sizes.length][biggestSize];
+        double[][] allErrors = new double[sizes.length][biggestSize];
+
+        int lastLayer = sizes[0];
+        for(int k = 0; k < lastLayer; k++)
+        {
+            allOutputs[0][k] = inputs[k];
+        }
+
+        for(int k = 1; k < hiddenLayers + 2; k++)
+        {
+            for(int a = 0; a < sizes[k]; a++)
+            {
+                double sum = 0;
+                for(int t = 0; t < lastLayer; t++)
+                {
+                    sum += allOutputs[k - 1][t] * getWeight(k - 1, t, k, a);
+                }
+                sum += biasNum * getWeight(-1, 0, k, a);
+                allOutputs[k][a] = applyActivationFunction(sum);
+                allErrors[k][a] = applyActivationFunctionDerivative(sum);
+            }
+            lastLayer = sizes[k];
+        }
+
+        for(int k = hiddenLayers + 1; k >= 0; k++)
+        {
+            for(int a = 0; a < sizes[k]; a++)
+            {
+                //not output layer
+                if(k != hiddenLayers + 1)
+                {
+                    double temp = allErrors[k][a];
+                    allErrors[k][a] = 0;
+                    for(int t = 0; t < sizes[k + 1]; t++)
+                    {
+                        allErrors[k][a] += getWeight(k, a, k + 1, t) * allErrors[k + 1][t];
+                    }
+                    allErrors[k][a] *= temp;
+                }
+                //output layer
+                else
+                {
+                    allErrors[k][a] *= (expectedOutputs[a] - allOutputs[k][a]);
+                }
+
+                for(int t = 0; t < sizes[k + 1]; t++)
+                {
+                    int index = getIndex(k - 1, a, k, t);
+                    double delta = learningRate * allOutputs[k - 1][a] * allErrors[k][a]
+                                   + momentum * lastDeltas[index];
+
+                    setWeight(k - 1, a, k, t, getWeight(k - 1, a, k, t) + delta);
+                    lastDeltas[index] = delta;
+                }
+            }
+        }
+    }
+
+    /**
      * Gets weight between 2 nodes
      * @param layerStart Starting layer, -1 for bias node
      * @param start Node number in the starting layer
@@ -334,10 +418,28 @@ public class FeedForwardNeuralNetwork
         switch(activationFunction)
         {
             case LINEAR:
-                double slope = 1.0;
-                return slope * sum;
+                return linearSlope * sum;
             case LOGISTIC:
                 return 1.0 / (1.0 * Math.pow(Math.E, sum * -1.0));
+        }
+
+        System.out.println("Failed to apply activation function");
+        return -9999;
+    }
+
+    /**
+     * similar to applyActivationFunction, but applies the derivative for testing
+     * @param sum the value to plug into the function
+     * @return The value returned by applying the function to the value
+     */
+    private double applyActivationFunctionDerivative(double sum)
+    {
+        switch(activationFunction)
+        {
+            case LINEAR:
+                return linearSlope;
+            case LOGISTIC:
+                return (Math.pow(Math.E, sum) / Math.pow(Math.pow(Math.E, sum) + 1, 2));
         }
 
         System.out.println("Failed to apply activation function");
