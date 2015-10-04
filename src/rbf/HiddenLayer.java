@@ -2,10 +2,10 @@ package rbf;
 
 public class HiddenLayer
 {
-    private double[] weights;
-    private double[] exampleValues;
-    private double result;
-    private double sigma = 0.5;
+    public double[] weights;
+    public double[] exampleValues;
+    public double result;
+    public double sigma = 0.5;
 
     public HiddenLayer(double[] values, double result)
     {
@@ -22,32 +22,20 @@ public class HiddenLayer
     public double activationFunction(double[] inputs)
     {
         double totalValue = 0;
-        double totalWeights = 0;
         for (int i = 0; i < inputs.length; i++)
         {
-            // exp( -1/2sigma * (|| xi - xj || ) ^ 2) * wi
-            totalValue += this.weights[i] * Math.exp(-1 * (0.5 / this.sigma) * (inputs[i] - this.exampleValues[i]) * (inputs[i] - this.exampleValues[i]));
-            totalWeights += this.weights[i];
+            totalValue += calculateInputValue(inputs, i);
         }
-
-        totalValue /= totalWeights;
 
         totalValue = totalValue * this.result;
 
         return totalValue;
     }
 
-    private double getResult(double input, double weight, double example)
+    public double calculateInputValue(double[] input, int index)
     {
-        double result = 0;
-
-        result = input - example;
-
-        result *= result;
-
-        result *= weight;
-
-        return result;
+        // exp( -1/2sigma * (|| xi - xj || ) ^ 2) * wi
+        return this.weights[index] * Math.exp(-1 * (0.5 / this.sigma) * (input[index] - this.exampleValues[index]) * (input[index] - this.exampleValues[index]));
     }
 
     public void print()

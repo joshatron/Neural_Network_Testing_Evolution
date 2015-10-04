@@ -3,6 +3,15 @@ package rbf;
 public class RBFNeuralNetwork
 {
     HiddenLayer[] hiddenNodes;
+    double[] nodeWeights;
+    int n;
+    double ada = 0.05;
+
+    public RBFNeuralNetwork(int n, double ada)
+    {
+        this.n = n;
+        this.ada = ada;
+    }
 
     /**
      * this method creates
@@ -31,6 +40,7 @@ public class RBFNeuralNetwork
     public void createTrainingDataWithKClustering(int centroids, int size, int n)
     {
         double[][] inputs = new double[size][n];
+        this.n = n;
 
         for (int i = 0; i < size; i++)
         {
@@ -38,19 +48,28 @@ public class RBFNeuralNetwork
             for (int j = 0; j < n; j++)
             {
                 input[j] = Math.random() * 100;
+               // System.out.print(input[j] + ", ");
             }
 
             inputs[i] = input;
+           // System.out.println("");
         }
 
         kMeansClustering clusterer = new kMeansClustering(inputs);
         double[][] createdCentroids = clusterer.run(5.0, centroids);
         this.hiddenNodes = new HiddenLayer[centroids];
+        this.nodeWeights = new double[centroids];
 
         for (int k = 0; k < createdCentroids.length; k++)
         {
             double y = findCorrectAnswer(createdCentroids[k]);
             this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y);
+        }
+
+        for (int l = 0; l < centroids; l++)
+        {
+            this.nodeWeights[l] = Math.random();
+            System.out.println("Weights: " + this.nodeWeights[l]);
         }
     }
 
@@ -71,7 +90,7 @@ public class RBFNeuralNetwork
 
         for (int i = 0; i < this.hiddenNodes.length; i++)
         {
-            result += this.hiddenNodes[i].activationFunction(inputs);
+            result += (this.hiddenNodes[i].activationFunction(inputs) * this.nodeWeights[i]);
         }
 
         return result;
@@ -86,5 +105,67 @@ public class RBFNeuralNetwork
             result += (1 - inputs[i])*(1 - inputs[i]) + (100 * (inputs[i+1] - inputs[i] * inputs[i]) * (inputs[i+1] - inputs[i] * inputs[i]));
         }
         return result;
+    }
+
+    /**
+     * This method is for training the data
+     */
+    public void train(int trainingSet)
+    {
+        for (int i = 0; i < trainingSet; i++)
+        {
+            double[] input = new double[this.n];
+            for (int j = 0; j < this.n; j++)
+            {
+                input[j] = Math.random() * 100;
+            }
+
+            double correctAnswer = findCorrectAnswer(input);
+            double rbfAnswer = getResult(input);
+            double error = correctAnswer - rbfAnswer;
+            backProp(input, error, rbfAnswer);
+        }
+    }
+
+    public void backProp(double[] input, double error, double total)
+    {
+        for (int i = 0; i < this.hiddenNodes.length; i++)
+        {
+            double nodeOutput = this.hiddenNodes[i].activationFunction(input);
+            double errorValue = error * nodeOutput * this.nodeWeights[i] / total;
+            double errorValue2 = Math.exp(-1 / Math.abs(errorValue));
+            //System.out.println("Error: " + error + ", change: " + errorValue + ", to e: " + errorValue2);
+            if (error < 0)
+            {
+                this.nodeWeights[i] = this.nodeWeights[i] - this.nodeWeights[i] * errorValue2 * this.ada;
+            }
+            else if (error > 0)
+            {
+                this.nodeWeights[i] = this.nodeWeights[i] + this.nodeWeights[i] * errorValue2 * this.ada;
+            }
+
+            // use error for node to update error for each weight
+            for (int j = 0; j < this.hiddenNodes[i].weights.length; j++)
+            {
+                double innerWeightChange = errorValue2 * this.hiddenNodes[i].calculateInputValue(input, j) * this.ada;
+
+                if (error < 0)
+                {
+                    this.hiddenNodes[i].weights[j] -= innerWeightChange;
+                }
+                else if (error > 0)
+                {
+                    this.hiddenNodes[i].weights[j] += innerWeightChange;
+                }
+            }
+        }
+    }
+
+    public void updateNodeWeights(double error)
+    {
+        for (int i = 0; i < this.nodeWeights.length; i++)
+        {
+            this.nodeWeights[i] += ada * error / this.nodeWeights[i];
+        }
     }
 }

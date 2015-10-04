@@ -29,12 +29,14 @@ public class kMeansClustering
 
         while (numbOfAssignedCentroids < numbOfCentroids)
         {
-            int nextCentroid = (int) Math.random() * (this.inputs.length - 1);
+            int nextCentroid = (int) (Math.random() * (this.inputs.length - 1));
 
             if (!findIfValueIsInArray(assignedCentroids,nextCentroid))
             {
-                centroids[nextCentroid] = inputs[nextCentroid];
-                nextCentroid++;
+                centroids[numbOfAssignedCentroids] = inputs[nextCentroid];
+                assignedCentroids[numbOfAssignedCentroids] = nextCentroid;
+                numbOfAssignedCentroids++;
+
             }
         }
 
@@ -81,6 +83,8 @@ public class kMeansClustering
 
             // calculate change in centroids
             diff = maxCentroidChange(centroids, newCentroids);
+            System.out.println("Diff: " + diff);
+            centroids = newCentroids;
 
         } while (diff > maxDiff);
 
@@ -109,7 +113,7 @@ public class kMeansClustering
         // find average with sum and # of values
         for (int k = 0; k < centroid.length; k++)
         {
-            centroid[k] /= centroidInputs[0].length;
+            centroid[k] /= centroidInputs.length;
         }
 
         return centroid;
@@ -123,16 +127,21 @@ public class kMeansClustering
         int[] inputMapToCentroids = new int[centroids.length];
         int[] indexInputCentroids = new int[this.inputs.length];
 
+        for (int b = 0; b < indexInputCentroids.length; b++)
+        {
+            indexInputCentroids[b] = 0;
+        }
+
         for (int i = 0; i < this.inputs.length; i++)
         {
-            double maxdist = 0;
+            double minDist = 999999;
             int index = 0;
             for (int j = 0; j < centroids.length; j++)
             {
                 double currentDist = distance(centroids[j], this.inputs[i]);
-                if (currentDist > maxdist)
+                if (currentDist < minDist)
                 {
-                    maxdist = currentDist;
+                    minDist = currentDist;
                     index = j;
                 }
             }
@@ -144,7 +153,8 @@ public class kMeansClustering
         double[][][] inputsInCentroids = new double[centroids.length][][];
         for (int k = 0; k < inputMapToCentroids.length; k++)
         {
-            inputsInCentroids[k] = new double[inputMapToCentroids[k]][this.inputs[0].length];
+            inputsInCentroids[k] = new double[inputMapToCentroids[k] + 1][this.inputs[0].length];
+            //System.out.println(inputMapToCentroids[k]);
         }
 
         int[] currentIndexForCentroids = new int[centroids.length];
