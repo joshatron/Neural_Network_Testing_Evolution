@@ -49,4 +49,13 @@ public class HiddenLayer
 
         return result;
     }
+
+    public void print()
+    {
+        for (int i = 0; i < this.exampleValues.length; i++)
+        {
+            System.out.print("Input["+i+"] = " + this.exampleValues[i] + ", ");
+        }
+        System.out.println("");
+    }
 }

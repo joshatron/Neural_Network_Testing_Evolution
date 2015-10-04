@@ -6,15 +6,18 @@ public class RunRBF
     {
         RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork();
 
-        rbfNeuralNetwork.createTrainingData(1000, 3);
+        rbfNeuralNetwork.createTrainingDataWithKClustering(10, 10000, 3);
+        rbfNeuralNetwork.print();
 
-
-        double x1 = Math.random() * 100;
-        double x2 = Math.random() * 100;
-        double x3 = Math.random() * 100;
-        double[] inputs = {x1, x2, x3};
-
-        System.out.println("Results: ");
-        System.out.println(rbfNeuralNetwork.findCorrectAnswer(inputs));
+//        rbfNeuralNetwork.createTrainingData(1000, 3);
+//
+//
+//        double x1 = Math.random() * 100;
+//        double x2 = Math.random() * 100;
+//        double x3 = Math.random() * 100;
+//        double[] inputs = {x1, x2, x3};
+//
+//        System.out.println("Results: ");
+//        System.out.println(rbfNeuralNetwork.findCorrectAnswer(inputs));
     }
 }

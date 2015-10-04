@@ -5,7 +5,7 @@ public class RBFNeuralNetwork
     HiddenLayer[] hiddenNodes;
 
     /**
-     * this method creates 
+     * this method creates
      */
     public void createTrainingData(int size, int n)
     {
@@ -49,7 +49,19 @@ public class RBFNeuralNetwork
 
         for (int k = 0; k < createdCentroids.length; k++)
         {
+            double y = findCorrectAnswer(createdCentroids[k]);
+            this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y);
+        }
+    }
 
+    /**
+     * This method prints out the hidden nodes for debugging purposes
+     */
+    public void print()
+    {
+        for (int i = 0; i < this.hiddenNodes.length; i++)
+        {
+            this.hiddenNodes[i].print();
         }
     }
 
