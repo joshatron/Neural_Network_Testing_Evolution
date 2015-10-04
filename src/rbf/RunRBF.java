@@ -6,7 +6,7 @@ public class RunRBF
     {
         RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork();
 
-        rbfNeuralNetwork.createTrainingData(1000);
+        rbfNeuralNetwork.createTrainingData(1000, 3);
 
 
         double x1 = Math.random() * 100;
