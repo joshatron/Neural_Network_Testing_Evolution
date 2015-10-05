@@ -213,7 +213,7 @@ public class FeedForwardNeuralNetwork
         JSONObject net = export();
 
         BufferedWriter out = new BufferedWriter(new PrintWriter(new FileWriter(file)));
-        out.write(net.toString(4));
+        out.write(net.toString(2));
         out.close();
     }
 
