@@ -16,10 +16,10 @@ public class RunRBF
 
     public static void main(String[] args)
     {
-        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(3, 0.01);
+        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(3, 0.1);
 
         System.out.println("Hello world");
-        rbfNeuralNetwork.createRandomTrainingDataWithKClustering(1000, 100000, 3);
+        rbfNeuralNetwork.createRandomTrainingDataWithKClustering(50, 250, 3);
         rbfNeuralNetwork.print();
 
         double x1 = Math.random() * 10 - 5;
@@ -54,7 +54,7 @@ public class RunRBF
         System.out.println("Results: " + rbfNeuralNetwork.findCorrectAnswer(inputs5));
         System.out.println("rbf est." + rbfNeuralNetwork.getResult(inputs5));
 
-        rbfNeuralNetwork.trainRandom(100000);
+        rbfNeuralNetwork.trainRandom(1000);
 
         System.out.println("After Training:");
 

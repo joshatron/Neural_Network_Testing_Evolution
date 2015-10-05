@@ -7,6 +7,7 @@ public class HiddenLayer
     public double result;
     public double sigma = 0.5;
     private int n;
+    int basisFunc = 0;
 
     public HiddenLayer(double[] values, double result, int n)
     {
@@ -36,8 +37,22 @@ public class HiddenLayer
 
     public double calculateInputValue(double[] input, int index)
     {
-        // exp( -1/2sigma * (|| xi - xj || ) ^ 2) * wi
-        return this.weights[index] * Math.exp(-1 * (0.5 / this.sigma) * (input[index] - this.exampleValues[index]) * (input[index] - this.exampleValues[index]));
+        if (this.basisFunc == 0)
+        {
+            // exp( -1/2sigma * (|| xi - xj || ) ^ 2) * wi
+            return this.weights[index] * Math.exp(-1 * (0.5 / this.sigma) * Math.abs((input[index] - this.exampleValues[index]) * (input[index] - this.exampleValues[index])));
+        }
+        else if (this.basisFunc == 1)
+        {
+            // linear basis function
+            // w * (1 / (|xi - xj|))
+            return (1 / (Math.abs(input[index] - this.exampleValues[index]))) * this.weights[index];
+        }
+        else
+        {
+
+            return 0.0;
+        }
     }
 
     public void print()
