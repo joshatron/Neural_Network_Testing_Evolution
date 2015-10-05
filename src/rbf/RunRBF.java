@@ -2,9 +2,18 @@ package rbf;
 
 public class RunRBF
 {
+
+    // func for testing rbf and returns avg. percent error
+    public static double testRBF(double[][] buildingSet, double[][] trainingSet, double[][] testingSet, double learningRate, int numbOfClusters)
+    {
+        double error = 0.0;
+
+        return error;
+    }
+
     public static void main(String[] args)
     {
-        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(3, 0.05);
+        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(3, 0.1);
 
         System.out.println("Hello world");
         rbfNeuralNetwork.createTrainingDataWithKClustering(500, 100000, 3);
