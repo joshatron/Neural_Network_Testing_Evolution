@@ -15,16 +15,17 @@ public class RunFeedForward
         {
             if(k % 1000 == 0)
             {
-                System.out.println(((k / examples.length) * 100) + "% done");
+                System.out.println(Math.round(((k / examples.length) * 100)) + "% done");
             }
-            double[] inputs = new double[examples[0].length - 1];
-            double[] output = new double[1];
+            double[] inputs = new double[examples[0].length - 2];
+            double[] output = new double[2];
 
             for(int a = 0; a < inputs.length; a++)
             {
                 inputs[a] = examples[k][a];
             }
-            output[0] = examples[k][examples[0].length - 1];
+            output[0] = examples[k][examples[0].length - 2];
+            output[1] = examples[k][examples[0].length - 1];
 
             net.backprop(inputs, output);
 
