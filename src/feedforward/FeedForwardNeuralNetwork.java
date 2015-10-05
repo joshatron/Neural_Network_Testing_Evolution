@@ -304,7 +304,7 @@ public class FeedForwardNeuralNetwork
             lastLayer = sizes[k];
         }
 
-        for(int k = hiddenLayers + 1; k >= 0; k++)
+        for(int k = hiddenLayers + 1; k > 0; k++)
         {
             for(int a = 0; a < sizes[k]; a++)
             {
@@ -325,13 +325,13 @@ public class FeedForwardNeuralNetwork
                     allErrors[k][a] *= (expectedOutputs[a] - allOutputs[k][a]);
                 }
 
-                for(int t = 0; t < sizes[k + 1]; t++)
+                for(int t = 0; t < sizes[k - 1]; t++)
                 {
                     int index = getIndex(k - 1, a, k, t);
-                    double delta = learningRate * allOutputs[k - 1][a] * allErrors[k][a]
+                    double delta = learningRate * allOutputs[k - 1][t] * allErrors[k][a]
                                    + momentum * lastDeltas[index];
 
-                    setWeight(k - 1, a, k, t, getWeight(k - 1, a, k, t) + delta);
+                    setWeight(k - 1, t, k, a, getWeight(k - 1, t, k, a) + delta);
                     lastDeltas[index] = delta;
                 }
             }
