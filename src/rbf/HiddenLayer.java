@@ -13,7 +13,7 @@ public class HiddenLayer
         // randomly create all of the weights
         for (int i = 0; i < values.length; i++)
         {
-            weights[i] =  (Math.random() * 100);
+            weights[i] =  Math.random();
         }
         this.exampleValues = values;
         this.result = result;

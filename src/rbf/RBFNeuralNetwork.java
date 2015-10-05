@@ -25,7 +25,7 @@ public class RBFNeuralNetwork
             double[] inputs = new double[n];
             for (int j = 0; j < n; j++)
             {
-                inputs[j] = Math.random() * 100;
+                inputs[j] = Math.random() * 10 - 5;
             }
 
             double y = findCorrectAnswer(inputs);
@@ -37,25 +37,25 @@ public class RBFNeuralNetwork
      * this method will create hidden nodes from centroids with the number of inputs specified
      * by size
      */
-    public void createTrainingDataWithKClustering(int centroids, int size, int n)
+    public void createTrainingDataWithKClustering(int centroids, double[][] buildingSet, int n)
     {
-        double[][] inputs = new double[size][n];
+        //double[][] inputs = new double[size][n];
         this.n = n;
 
-        for (int i = 0; i < size; i++)
-        {
-            double[] input = new double[n];
-            for (int j = 0; j < n; j++)
-            {
-                input[j] = Math.random() * 100;
-               // System.out.print(input[j] + ", ");
-            }
+//        for (int i = 0; i < buildingSet.length; i++)
+//        {
+//            double[] input = new double[n];
+//            for (int j = 0; j < n; j++)
+//            {
+//                input[j] = Math.random() * 10 - 5;
+//               // System.out.print(input[j] + ", ");
+//            }
+//
+//            inputs[i] = input;
+//           // System.out.println("");
+//        }
 
-            inputs[i] = input;
-           // System.out.println("");
-        }
-
-        kMeansClustering clusterer = new kMeansClustering(inputs);
+        kMeansClustering clusterer = new kMeansClustering(buildingSet);
         double[][] createdCentroids = clusterer.run(5.0, centroids);
         this.hiddenNodes = new HiddenLayer[centroids];
         this.nodeWeights = new double[centroids];
@@ -110,20 +110,20 @@ public class RBFNeuralNetwork
     /**
      * This method is for training the data
      */
-    public void train(int trainingSet)
+    public void train(double[][] trainingSet)
     {
-        for (int i = 0; i < trainingSet; i++)
+        for (int i = 0; i < trainingSet.length; i++)
         {
-            double[] input = new double[this.n];
-            for (int j = 0; j < this.n; j++)
-            {
-                input[j] = Math.random() * 100;
-            }
+//            double[] input = new double[this.n];
+//            for (int j = 0; j < this.n; j++)
+//            {
+//                input[j] = Math.random() * 10 - 5;
+//            }
 
-            double correctAnswer = findCorrectAnswer(input);
-            double rbfAnswer = getResult(input);
+            double correctAnswer = findCorrectAnswer(trainingSet[i]);
+            double rbfAnswer = getResult(trainingSet[i]);
             double error = correctAnswer - rbfAnswer;
-            backProp(input, error, rbfAnswer);
+            backProp(trainingSet[i], error, rbfAnswer);
         }
     }
 
