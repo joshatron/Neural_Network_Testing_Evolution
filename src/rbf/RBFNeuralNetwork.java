@@ -55,7 +55,6 @@ public class RBFNeuralNetwork
         for (int l = 0; l < centroids; l++)
         {
             this.nodeWeights[l] = Math.random();
-            System.out.println("Weights: " + this.nodeWeights[l]);
         }
     }
 
@@ -93,7 +92,6 @@ public class RBFNeuralNetwork
         for (int l = 0; l < centroids; l++)
         {
             this.nodeWeights[l] = Math.random();
-            System.out.println("Weights: " + this.nodeWeights[l]);
         }
     }
 

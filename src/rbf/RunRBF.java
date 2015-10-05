@@ -19,7 +19,7 @@ public class RunRBF
         RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(3, 0.01);
 
         System.out.println("Hello world");
-        rbfNeuralNetwork.createRandomTrainingDataWithKClustering(500, 100000, 3);
+        rbfNeuralNetwork.createRandomTrainingDataWithKClustering(1000, 100000, 3);
         rbfNeuralNetwork.print();
 
         double x1 = Math.random() * 10 - 5;
@@ -54,7 +54,7 @@ public class RunRBF
         System.out.println("Results: " + rbfNeuralNetwork.findCorrectAnswer(inputs5));
         System.out.println("rbf est." + rbfNeuralNetwork.getResult(inputs5));
 
-        rbfNeuralNetwork.trainRandom(10000);
+        rbfNeuralNetwork.trainRandom(100000);
 
         System.out.println("After Training:");
 
