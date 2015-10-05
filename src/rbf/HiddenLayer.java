@@ -6,12 +6,14 @@ public class HiddenLayer
     public double[] exampleValues;
     public double result;
     public double sigma = 0.5;
+    private int n;
 
-    public HiddenLayer(double[] values, double result)
+    public HiddenLayer(double[] values, double result, int n)
     {
         weights = new double[values.length];
+        this.n = n;
         // randomly create all of the weights
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < this.n; i++)
         {
             weights[i] =  Math.random();
         }
@@ -22,7 +24,7 @@ public class HiddenLayer
     public double activationFunction(double[] inputs)
     {
         double totalValue = 0;
-        for (int i = 0; i < inputs.length; i++)
+        for (int i = 0; i < n; i++)
         {
             totalValue += calculateInputValue(inputs, i);
         }

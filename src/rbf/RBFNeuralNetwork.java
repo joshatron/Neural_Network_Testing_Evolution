@@ -29,7 +29,7 @@ public class RBFNeuralNetwork
             }
 
             double y = findCorrectAnswer(inputs);
-            this.hiddenNodes[i] = new HiddenLayer(inputs, y);
+            this.hiddenNodes[i] = new HiddenLayer(inputs, y, n);
         }
     }
 
@@ -39,23 +39,9 @@ public class RBFNeuralNetwork
      */
     public void createTrainingDataWithKClustering(int centroids, double[][] buildingSet, int n)
     {
-        //double[][] inputs = new double[size][n];
         this.n = n;
 
-//        for (int i = 0; i < buildingSet.length; i++)
-//        {
-//            double[] input = new double[n];
-//            for (int j = 0; j < n; j++)
-//            {
-//                input[j] = Math.random() * 10 - 5;
-//               // System.out.print(input[j] + ", ");
-//            }
-//
-//            inputs[i] = input;
-//           // System.out.println("");
-//        }
-
-        kMeansClustering clusterer = new kMeansClustering(buildingSet);
+        kMeansClustering clusterer = new kMeansClustering(buildingSet, n);
         double[][] createdCentroids = clusterer.run(5.0, centroids);
         this.hiddenNodes = new HiddenLayer[centroids];
         this.nodeWeights = new double[centroids];
@@ -63,7 +49,45 @@ public class RBFNeuralNetwork
         for (int k = 0; k < createdCentroids.length; k++)
         {
             double y = findCorrectAnswer(createdCentroids[k]);
-            this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y);
+            this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y, n);
+        }
+
+        for (int l = 0; l < centroids; l++)
+        {
+            this.nodeWeights[l] = Math.random();
+            System.out.println("Weights: " + this.nodeWeights[l]);
+        }
+    }
+
+    /**
+     * this method will create hidden nodes from centroids with the number of inputs specified
+     * by size
+     */
+    public void createRandomTrainingDataWithKClustering(int centroids, int size, int n)
+    {
+        double[][] inputs = new double[size][n];
+        this.n = n;
+
+        for (int i = 0; i < size; i++)
+        {
+            double[] input = new double[n];
+            for (int j = 0; j < n; j++)
+            {
+                input[j] = Math.random() * 10 - 5;
+            }
+
+            inputs[i] = input;
+        }
+
+        kMeansClustering clusterer = new kMeansClustering(inputs, n);
+        double[][] createdCentroids = clusterer.run(5.0, centroids);
+        this.hiddenNodes = new HiddenLayer[centroids];
+        this.nodeWeights = new double[centroids];
+
+        for (int k = 0; k < createdCentroids.length; k++)
+        {
+            double y = findCorrectAnswer(createdCentroids[k]);
+            this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y, n);
         }
 
         for (int l = 0; l < centroids; l++)
@@ -114,16 +138,30 @@ public class RBFNeuralNetwork
     {
         for (int i = 0; i < trainingSet.length; i++)
         {
-//            double[] input = new double[this.n];
-//            for (int j = 0; j < this.n; j++)
-//            {
-//                input[j] = Math.random() * 10 - 5;
-//            }
-
             double correctAnswer = findCorrectAnswer(trainingSet[i]);
             double rbfAnswer = getResult(trainingSet[i]);
             double error = correctAnswer - rbfAnswer;
             backProp(trainingSet[i], error, rbfAnswer);
+        }
+    }
+
+    /**
+     * This method is for training the data
+     */
+    public void trainRandom(int size)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            double[] input = new double[this.n];
+            for (int j = 0; j < this.n; j++)
+            {
+                input[j] = Math.random() * 10 - 5;
+            }
+
+            double correctAnswer = findCorrectAnswer(input);
+            double rbfAnswer = getResult(input);
+            double error = correctAnswer - rbfAnswer;
+            backProp(input, error, rbfAnswer);
         }
     }
 
