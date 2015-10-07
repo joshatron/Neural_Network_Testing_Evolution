@@ -3,10 +3,12 @@ package rbf;
 public class kMeansClustering
 {
     private double[][] inputs;
+    private int n;
 
-    public kMeansClustering(double[][] inputs)
+    public kMeansClustering(double[][] inputs, int n)
     {
         this.inputs = inputs;
+        this.n = n;
     }
 
     /**
@@ -104,7 +106,7 @@ public class kMeansClustering
         // find sum for all inputs
         for (int i = 0; i < centroidInputs.length; i++)
         {
-            for (int j = 0; j < centroid.length; j++)
+            for (int j = 0; j < n; j++)
             {
                 centroid[j] += centroidInputs[i][j];
             }
@@ -154,7 +156,6 @@ public class kMeansClustering
         for (int k = 0; k < inputMapToCentroids.length; k++)
         {
             inputsInCentroids[k] = new double[inputMapToCentroids[k] + 1][this.inputs[0].length];
-            //System.out.println(inputMapToCentroids[k]);
         }
 
         int[] currentIndexForCentroids = new int[centroids.length];
@@ -182,7 +183,7 @@ public class kMeansClustering
     {
         double total = 0.0;
 
-        for (int i = 0; i < x1.length; i++)
+        for (int i = 0; i < n; i++)
         {
             total += (x1[i] - x2[i]) * (x1[i] - x2[i]);
         }
