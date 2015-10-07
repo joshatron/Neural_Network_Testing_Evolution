@@ -23,6 +23,7 @@ import java.util.Random;
  */
 public class FeedForwardNeuralNetwork
 {
+    //properties of the net
     private double momentum;
     private double learningRate;
     private double[] weights;
@@ -33,6 +34,7 @@ public class FeedForwardNeuralNetwork
     private double biasNum = 1.;
     private double linearSlope = 1.;
 
+    //last deltas to be used for momentum
     private double[] lastDeltas;
 
     /**
@@ -224,12 +226,14 @@ public class FeedForwardNeuralNetwork
      */
     public double[] compute(double[] inputs)
     {
+        //if input wrong size, return
         if(inputs.length != sizes[0])
         {
             System.out.println("Invalid number of inputs");
             return null;
         }
 
+        //fill out first layer to temp output
         int lastLayer = sizes[0];
         double[] layerOut = new double[biggestSize];
         for(int k = 0; k < lastLayer; k++)
@@ -237,11 +241,14 @@ public class FeedForwardNeuralNetwork
             layerOut[k] = inputs[k];
         }
 
+        //for each layer after first
         for(int k = 1; k < hiddenLayers + 2; k++)
         {
+            //for each node in that layer
             double[] tempOut = new double[sizes[k]];
             for(int a = 0; a < sizes[k]; a++)
             {
+                //get sum and apply activation function
                 double sum = 0;
                 for(int t = 0; t < lastLayer; t++)
                 {
@@ -251,6 +258,7 @@ public class FeedForwardNeuralNetwork
                 tempOut[a] = applyActivationFunction(sum);
             }
             lastLayer = sizes[k];
+            //fill out return
             for(int a = 0; a < lastLayer; a++)
             {
                 layerOut[a] = tempOut[a];
@@ -261,12 +269,13 @@ public class FeedForwardNeuralNetwork
     }
 
     /**
-     * Given an example with the inputs and expected outputs, teaches the nets
+     * Given an example with the inputs and expected outputs, trains the net
      * @param inputs the inputs for the example
      * @param expectedOutputs what the outputs should be
      */
     public void backprop(double[] inputs, double[] expectedOutputs)
     {
+        //if input or output wrong size, return
         if(inputs.length != sizes[0])
         {
             System.out.println("Invalid number of inputs");
@@ -282,16 +291,20 @@ public class FeedForwardNeuralNetwork
         double[][] allOutputs = new double[sizes.length][biggestSize];
         double[][] allErrors = new double[sizes.length][biggestSize];
 
+        //fill out first layer to temp output
         int lastLayer = sizes[0];
         for(int k = 0; k < lastLayer; k++)
         {
             allOutputs[0][k] = inputs[k];
         }
 
+        //for each layer after the input
         for(int k = 1; k < hiddenLayers + 2; k++)
         {
+            //for each node in that layer
             for(int a = 0; a < sizes[k]; a++)
             {
+                //get sum and get activation function result and its derivative
                 double sum = 0;
                 for(int t = 0; t < lastLayer; t++)
                 {
@@ -304,11 +317,13 @@ public class FeedForwardNeuralNetwork
             lastLayer = sizes[k];
         }
 
+        //go backward from output to first hidden layer
         for(int k = hiddenLayers + 1; k > 0; k--)
         {
+            //for each node in that layer
             for(int a = 0; a < sizes[k]; a++)
             {
-                //not output layer
+                //compute error for not output layer
                 if(k != hiddenLayers + 1)
                 {
                     double temp = allErrors[k][a];
@@ -319,14 +334,16 @@ public class FeedForwardNeuralNetwork
                     }
                     allErrors[k][a] *= temp;
                 }
-                //output layer
+                //compute error for output layer
                 else
                 {
                     allErrors[k][a] *= (expectedOutputs[a] - allOutputs[k][a]);
                 }
 
+                //for each weight node takes as input
                 for(int t = 0; t < sizes[k - 1]; t++)
                 {
+                    //find the delta for the weight and apply
                     int index = getIndex(k - 1, t, k, a);
                     double delta = learningRate * allOutputs[k - 1][t] * allErrors[k][a]
                                    + momentum * lastDeltas[index];
@@ -428,7 +445,7 @@ public class FeedForwardNeuralNetwork
     }
 
     /**
-     * similar to applyActivationFunction, but applies the derivative for testing
+     * similar to applyActivationFunction, but applies the derivative for training
      * @param sum the value to plug into the function
      * @return The value returned by applying the function to the value
      */
