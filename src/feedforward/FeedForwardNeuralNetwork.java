@@ -16,9 +16,6 @@ import java.util.Random;
  * which will create the net with random weights.
  * The net can currently use 2 different activation functions,
  * a linear function with a slope of 1 and the logistic function.
- * The net handles all learning. Pass it an array of JSON examples
- * and it will perform backprop once on each example. You can adjust
- * the momentum and learning rate when you construct the net.
  * Each node is connected to a bias node which has a value of 1.
  */
 public class FeedForwardNeuralNetwork
