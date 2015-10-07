@@ -83,7 +83,7 @@ public class kMeansClustering
 
             // calculate change in centroids
             diff = maxCentroidChange(centroids, newCentroids);
-            System.out.println("Diff: " + diff);
+            //System.out.println("Diff: " + diff);
             centroids = newCentroids;
 
         } while (diff > maxDiff);

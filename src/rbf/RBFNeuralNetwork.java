@@ -69,7 +69,7 @@ public class RBFNeuralNetwork
         for (int l = 0; l < centroids; l++)
         {
             this.nodeWeights[l] = Math.random();
-            System.out.println("Weights: " + this.nodeWeights[l]);
+            //System.out.println("Weights: " + this.nodeWeights[l]);
         }
     }
 
@@ -127,6 +127,10 @@ public class RBFNeuralNetwork
         }
     }
 
+    /**
+     * This method takes the error and updates the weight using gradient descent
+     * to
+     */
     public void backProp(double[] input, double error, double total)
     {
         for (int i = 0; i < this.hiddenNodes.length; i++)
@@ -158,14 +162,6 @@ public class RBFNeuralNetwork
                     this.hiddenNodes[i].weights[j] += innerWeightChange;
                 }
             }
-        }
-    }
-
-    public void updateNodeWeights(double error)
-    {
-        for (int i = 0; i < this.nodeWeights.length; i++)
-        {
-            this.nodeWeights[i] += ada * error / this.nodeWeights[i];
         }
     }
 }
