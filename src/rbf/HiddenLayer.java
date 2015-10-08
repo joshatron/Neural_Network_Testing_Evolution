@@ -38,22 +38,26 @@ public class HiddenLayer
 
     public double calculateInputValue(double[] input, int index)
     {
-        // Gausian basis function
+        // Gaussian basis function
         if (this.basisFunc == 0)
         {
+            double distance = Math.abs(input[index] - this.exampleValues[index]);
             // exp( -1/2sigma * (|| xi - xj || ) ^ 2) * wi
-            return this.weights[index] * Math.exp(-1 * (0.5 / this.sigma) * Math.abs((input[index] - this.exampleValues[index]) * (input[index] - this.exampleValues[index])));
+            return this.weights[index] * Math.exp(-1 * (0.5 / this.sigma) * (distance*distance));
         }
-        // Inverse Multi-Quadric Function
+        // Inverse Multi-Quadratic function
         else if (this.basisFunc == 1)
         {
-            double err = Math.abs(input[index] - this.exampleValues[index]);
+            double distance = Math.abs(input[index] - this.exampleValues[index]);
             // ( || xi - xj || ^  2 + sigma ^ 2 ) ^ (-1/2)
-            return Math.pow((err * err + this.sigma * this.sigma), -0.5);
+            return Math.pow((distance * distance + this.sigma * this.sigma), -0.5);
         }
+        // cubic function
         else
         {
-            return 0.0;
+            double distance = Math.abs(input[index] - this.exampleValues[index]);
+            // ( || xi - xj || ) ^ -3
+            return Math.pow(distance * distance, -3);
         }
     }
 

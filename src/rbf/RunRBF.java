@@ -57,7 +57,7 @@ public class RunRBF
 //        System.out.println("Squared Error: " + errors[2]);
 
 
-        RBFNeuralNetwork rbfNeuralNetwork2 = new RBFNeuralNetwork(2, 0.1, 1);
+        RBFNeuralNetwork rbfNeuralNetwork2 = new RBFNeuralNetwork(2, 0.01, 0);
         double[][] buildingData = new double[250000][3];
         double[][] traingSet = new double[250000][3];
 
@@ -91,8 +91,7 @@ public class RunRBF
 
         rbfNeuralNetwork2.train(traingSet);
 
-
-        errors = percentageOnNumb(rbfNeuralNetwork2, 50, 2);
+        errors = percentageOnNumb(rbfNeuralNetwork2, 10000, 2);
         System.out.println("");
         System.out.println("Using predetermined building and training data");
         System.out.println("Error percentage: " + errors[0]);

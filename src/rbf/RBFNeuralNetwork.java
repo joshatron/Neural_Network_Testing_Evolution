@@ -76,6 +76,15 @@ public class RBFNeuralNetwork
         }
     }
 
+    public boolean aboveValue(double[] inputs, double value)
+    {
+        if (this.getResult(inputs) > value)
+        {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * this method will create hidden nodes from centroids with the number of inputs specified
      * by size
@@ -133,20 +142,7 @@ public class RBFNeuralNetwork
 
         for (int i = 0; i < this.hiddenNodes.length; i++)
         {
-//            if (inputs.length > this.n)
-//            {
-//                double[] tempInputs = new double[inputs.length - 1];
-//
-//                for (int j = 0; j < tempInputs.length; j++)
-//                {
-//                    tempInputs[j] = inputs[j];
-//                }
-//                result += (this.hiddenNodes[i].activationFunction(tempInputs) * this.nodeWeights[i]);
-//            }
-//            else
-//            {
-                result += (this.hiddenNodes[i].activationFunction(inputs) * this.nodeWeights[i]);
-//            }
+            result += (this.hiddenNodes[i].activationFunction(inputs) * this.nodeWeights[i]);
         }
 
         return result;
