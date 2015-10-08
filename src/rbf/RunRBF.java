@@ -58,8 +58,8 @@ public class RunRBF
 
 
         RBFNeuralNetwork rbfNeuralNetwork2 = new RBFNeuralNetwork(2, 0.1);
-        double[][] buildingData = new double[250][3];
-        double[][] traingSet = new double[250][3];
+        double[][] buildingData = new double[250][2];
+        double[][] traingSet = new double[250][2];
 
         for (int i = 0; i < buildingData.length; i++)
         {

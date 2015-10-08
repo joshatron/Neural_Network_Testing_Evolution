@@ -25,7 +25,7 @@ public class HiddenLayer
     public double activationFunction(double[] inputs)
     {
         double totalValue = 0;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < this.n; i++)
         {
             totalValue += calculateInputValue(inputs, i);
         }

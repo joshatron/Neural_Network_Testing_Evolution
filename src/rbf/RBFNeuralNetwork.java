@@ -131,20 +131,20 @@ public class RBFNeuralNetwork
 
         for (int i = 0; i < this.hiddenNodes.length; i++)
         {
-            if (inputs.length > this.n)
-            {
-                double[] tempInputs = new double[inputs.length - 1];
-
-                for (int j = 0; j < tempInputs.length; j++)
-                {
-                    tempInputs[j] = inputs[j];
-                }
-                result += (this.hiddenNodes[i].activationFunction(tempInputs) * this.nodeWeights[i]);
-            }
-            else
-            {
+//            if (inputs.length > this.n)
+//            {
+//                double[] tempInputs = new double[inputs.length - 1];
+//
+//                for (int j = 0; j < tempInputs.length; j++)
+//                {
+//                    tempInputs[j] = inputs[j];
+//                }
+//                result += (this.hiddenNodes[i].activationFunction(tempInputs) * this.nodeWeights[i]);
+//            }
+//            else
+//            {
                 result += (this.hiddenNodes[i].activationFunction(inputs) * this.nodeWeights[i]);
-            }
+//            }
         }
 
         return result;
@@ -157,7 +157,7 @@ public class RBFNeuralNetwork
     public double findCorrectAnswer(double[] inputs)
     {
         double result = 0;
-        for (int i = 0; i < inputs.length - 1; i++)
+        for (int i = 0; i < this.n - 1; i++)
         {
             result += (1 - inputs[i])*(1 - inputs[i]) + (100 * (inputs[i+1] - inputs[i] * inputs[i]) * (inputs[i+1] - inputs[i] * inputs[i]));
         }
@@ -174,6 +174,7 @@ public class RBFNeuralNetwork
             double correctAnswer = this.findCorrectAnswer(trainingSet[i]);
             double rbfAnswer = this.getResult(trainingSet[i]);
             double error = correctAnswer - rbfAnswer;
+            System.out.println("Error: " + error);
             this.backProp(trainingSet[i], error, rbfAnswer);
         }
     }
