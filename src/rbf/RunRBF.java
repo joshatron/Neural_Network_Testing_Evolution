@@ -2,11 +2,13 @@ package rbf;
 
 public class RunRBF
 {
-
     // func for testing rbf and returns avg. percent error
     // rbfNeuralNetwork.getResults(double[] inputs); returns networks value
     // rbfNeuralNetwork.findCorrectAnswer(double[] inputs); returns actual value
-    public static RBFNeuralNetwork testRBF(double[][] buildingSet, double[][] trainingSet, double[][] testingSet, double learningRate, int numbOfClusters, int basisFunction, int repeats)
+    // sizes of training data: 1,000 50,000 100,000 500,000 1,000,000 5,000,000
+    // sizes of building set: 500 10,000 and 100,000
+    // learning rates 0.1,0.05,0.01,0.005,0.001
+    public static RBFNeuralNetwork testRBF(double[][] buildingSet, double[][] trainingSet, double learningRate, int numbOfClusters, int basisFunction, int repeats)
     {
         RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(buildingSet[0].length - 1, learningRate, basisFunction, repeats);
         rbfNeuralNetwork.createTrainingDataWithKClustering(numbOfClusters, buildingSet);
