@@ -17,31 +17,34 @@ public class RunFeedForward
      */
     public static FeedForwardNeuralNetwork run(double[][] examples, int hiddenLayers, int[] sizesLayers,
                                                double learningRate, double momentum,
-                                               ActivationFunction activationFunction)
+                                               ActivationFunction activationFunction, int timesThrough)
     {
         FeedForwardNeuralNetwork net = new FeedForwardNeuralNetwork(hiddenLayers, sizesLayers, activationFunction,
                                                                     momentum, learningRate);
-        //for each examples
-        for(int k = 0; k < examples.length; k++)
+        for(int t = 0; t < timesThrough; t++)
         {
-            //extract input and output
-            if(k % 1000 == 0)
+            //for each examples
+            for(int k = 0; k < examples.length; k++)
             {
-                System.out.println(Math.round(((k / examples.length) * 100)) + "% done");
+                //extract input and output
+                if(k % 1000 == 0)
+                {
+                    System.out.println(Math.round(((k / examples.length) * 100)) + "% done");
+                }
+                double[] input = new double[examples[0].length - 2];
+                double[] output = new double[2];
+
+                for(int a = 0; a < input.length; a++)
+                {
+                    input[a] = examples[k][a];
+                }
+                output[0] = examples[k][examples[0].length - 2];
+                output[1] = examples[k][examples[0].length - 1];
+
+                //run backprop
+                net.backprop(input, output);
+
             }
-            double[] input = new double[examples[0].length - 2];
-            double[] output = new double[2];
-
-            for(int a = 0; a < input.length; a++)
-            {
-                input[a] = examples[k][a];
-            }
-            output[0] = examples[k][examples[0].length - 2];
-            output[1] = examples[k][examples[0].length - 1];
-
-            //run backprop
-            net.backprop(input, output);
-
         }
 
         return net;
