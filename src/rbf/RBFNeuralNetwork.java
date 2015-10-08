@@ -6,11 +6,13 @@ public class RBFNeuralNetwork
     double[] nodeWeights;
     int n;
     double ada = 0.05;
+    int basisFunction;
 
-    public RBFNeuralNetwork(int n, double ada)
+    public RBFNeuralNetwork(int n, double ada, int basisFunction)
     {
         this.n = n;
         this.ada = ada;
+        this.basisFunction = basisFunction;
     }
 
     /**
@@ -29,7 +31,7 @@ public class RBFNeuralNetwork
             }
 
             double y = findCorrectAnswer(inputs);
-            this.hiddenNodes[i] = new HiddenLayer(inputs, y, n);
+            this.hiddenNodes[i] = new HiddenLayer(inputs, y, n, basisFunction);
         }
     }
 
@@ -65,7 +67,7 @@ public class RBFNeuralNetwork
         for (int k = 0; k < createdCentroids.length; k++)
         {
             double y = findCorrectAnswer(createdCentroids[k]);
-            this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y, this.n);
+            this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y, this.n, basisFunction);
         }
 
         for (int l = 0; l < centroids; l++)
@@ -101,7 +103,7 @@ public class RBFNeuralNetwork
         for (int k = 0; k < createdCentroids.length; k++)
         {
             double y = findCorrectAnswer(createdCentroids[k]);
-            this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y, this.n);
+            this.hiddenNodes[k] = new HiddenLayer(createdCentroids[k], y, this.n, this.basisFunction);
         }
 
         for (int l = 0; l < centroids; l++)
@@ -174,7 +176,6 @@ public class RBFNeuralNetwork
             double correctAnswer = this.findCorrectAnswer(trainingSet[i]);
             double rbfAnswer = this.getResult(trainingSet[i]);
             double error = correctAnswer - rbfAnswer;
-            System.out.println("Error: " + error);
             this.backProp(trainingSet[i], error, rbfAnswer);
         }
     }

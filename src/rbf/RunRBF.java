@@ -6,9 +6,9 @@ public class RunRBF
     // func for testing rbf and returns avg. percent error
     // rbfNeuralNetwork.getResults(double[] inputs); returns networks value
     // rbfNeuralNetwork.findCorrectAnswer(double[] inputs); returns actual value
-    public static RBFNeuralNetwork testRBF(double[][] buildingSet, double[][] trainingSet, double[][] testingSet, double learningRate, int numbOfClusters)
+    public static RBFNeuralNetwork testRBF(double[][] buildingSet, double[][] trainingSet, double[][] testingSet, double learningRate, int numbOfClusters, int basisFunction)
     {
-        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(buildingSet[0].length - 1, learningRate);
+        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(buildingSet[0].length - 1, learningRate, basisFunction);
         rbfNeuralNetwork.createTrainingDataWithKClustering(numbOfClusters, buildingSet);
         rbfNeuralNetwork.train(trainingSet);
         return rbfNeuralNetwork;
@@ -57,9 +57,9 @@ public class RunRBF
 //        System.out.println("Squared Error: " + errors[2]);
 
 
-        RBFNeuralNetwork rbfNeuralNetwork2 = new RBFNeuralNetwork(2, 0.1);
-        double[][] buildingData = new double[250][2];
-        double[][] traingSet = new double[250][2];
+        RBFNeuralNetwork rbfNeuralNetwork2 = new RBFNeuralNetwork(2, 0.1, 1);
+        double[][] buildingData = new double[250000][3];
+        double[][] traingSet = new double[250000][3];
 
         for (int i = 0; i < buildingData.length; i++)
         {
@@ -80,7 +80,15 @@ public class RunRBF
             }
         }
 
-        rbfNeuralNetwork2.createTrainingDataWithKClustering(50, buildingData);
+        rbfNeuralNetwork2.createTrainingDataWithKClustering(500, buildingData);
+
+        errors = percentageOnNumb(rbfNeuralNetwork2, 50, 2);
+        System.out.println("");
+        System.out.println("Using predetermined building and training data");
+        System.out.println("Error percentage: " + errors[0]);
+        System.out.println("Total Error: " + errors[1]);
+        System.out.println("Squared Error: " + errors[2]);
+
         rbfNeuralNetwork2.train(traingSet);
 
 

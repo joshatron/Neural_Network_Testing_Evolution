@@ -9,7 +9,7 @@ public class HiddenLayer
     private int n;
     int basisFunc = 0;
 
-    public HiddenLayer(double[] values, double result, int n)
+    public HiddenLayer(double[] values, double result, int n, int basisFunc)
     {
         weights = new double[values.length];
         this.n = n;
@@ -20,6 +20,7 @@ public class HiddenLayer
         }
         this.exampleValues = values;
         this.result = result;
+        this.basisFunc = basisFunc;
     }
 
     public double activationFunction(double[] inputs)
@@ -37,16 +38,18 @@ public class HiddenLayer
 
     public double calculateInputValue(double[] input, int index)
     {
+        // Gausian basis function
         if (this.basisFunc == 0)
         {
             // exp( -1/2sigma * (|| xi - xj || ) ^ 2) * wi
             return this.weights[index] * Math.exp(-1 * (0.5 / this.sigma) * Math.abs((input[index] - this.exampleValues[index]) * (input[index] - this.exampleValues[index])));
         }
+        // Inverse Multi-Quadric Function
         else if (this.basisFunc == 1)
         {
-            // linear basis function
-            // w * (1 / (|xi - xj|))
-            return (1 / (Math.abs(input[index] - this.exampleValues[index]))) * this.weights[index];
+            double err = Math.abs(input[index] - this.exampleValues[index]);
+            // ( || xi - xj || ^  2 + sigma ^ 2 ) ^ (-1/2)
+            return Math.pow((err * err + this.sigma * this.sigma), -0.5);
         }
         else
         {
