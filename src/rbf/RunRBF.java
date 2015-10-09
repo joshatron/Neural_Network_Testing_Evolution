@@ -2,13 +2,15 @@ package rbf;
 
 public class RunRBF
 {
-
     // func for testing rbf and returns avg. percent error
     // rbfNeuralNetwork.getResults(double[] inputs); returns networks value
     // rbfNeuralNetwork.findCorrectAnswer(double[] inputs); returns actual value
-    public static RBFNeuralNetwork testRBF(double[][] buildingSet, double[][] trainingSet, double[][] testingSet, double learningRate, int numbOfClusters, int basisFunction)
+    // sizes of training data: 1,000 50,000 100,000 500,000 1,000,000 5,000,000
+    // sizes of building set: 500 10,000 and 100,000
+    // learning rates 0.1,0.05,0.01,0.005,0.001
+    public static RBFNeuralNetwork testRBF(double[][] buildingSet, double[][] trainingSet, double learningRate, int numbOfClusters, int basisFunction, int repeats)
     {
-        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(buildingSet[0].length - 1, learningRate, basisFunction);
+        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(buildingSet[0].length - 1, learningRate, basisFunction, repeats);
         rbfNeuralNetwork.createTrainingDataWithKClustering(numbOfClusters, buildingSet);
         rbfNeuralNetwork.train(trainingSet);
         return rbfNeuralNetwork;
@@ -17,89 +19,55 @@ public class RunRBF
     public static void main(String[] args)
     {
         double[] errors;
-//        RBFNeuralNetwork rbfNeuralNetwork = new RBFNeuralNetwork(2, 0.005);
-//
-//        System.out.println("Hello world");
-//        rbfNeuralNetwork.createRandomTrainingDataWithKClustering(100, 10000);
-//        rbfNeuralNetwork.print();
-//
-////        double x1 = Math.random() * 10 - 5;
-////        double x2 = Math.random() * 10 - 5;
-//////        double x3 = Math.random() * 10 - 5;
-//////        double[] inputs = {x1, x2, x3};
-////        double[] inputs = {x1, x2};
-////        x1 = Math.random() * 10 - 5;
-////        x2 = Math.random() * 10 - 5;
-//////        x3 = Math.random() * 10 - 5;
-//////        double[] inputs2 = {x1, x2, x3};
-////        double[] inputs2 = {x1, x2};
-////        x1 = Math.random() * 10 - 5;
-////        x2 = Math.random() * 10 - 5;
-//////        x3 = Math.random() * 10 - 5;
-//////        double[] inputs3 = {x1, x2, x3};
-////        double[] inputs3 = {x1, x2};
-////        x1 = Math.random() * 10 - 5;
-////        x2 = Math.random() * 10 - 5;
-//////        x3 = Math.random() * 10 - 5;
-//////        double[] inputs4 = {x1, x2, x3};
-////        double[] inputs4 = {x1, x2};
-////        x1 = Math.random() * 10 - 5;
-////        x2 = Math.random() * 10 - 5;
-//////        x3 = Math.random() * 10 - 5;
-//////        double[] inputs5 = {x1, x2, x3};
-//
-//
-//        rbfNeuralNetwork.trainRandom(1000);
-//
-//        errors = percentageOnNumb(rbfNeuralNetwork, 50, 3);
-//        System.out.println("Error percentage: " + errors[0]);
-//        System.out.println("Total Error: " + errors[1]);
-//        System.out.println("Squared Error: " + errors[2]);
 
+        RBFNeuralNetwork rbfNeuralNetwork2 = new RBFNeuralNetwork(5, 0.01, 0, 100);
+//        double[][] buildingData = new double[250000][3];
+//        double[][] traingSet = new double[250000][3];
+//
+//        for (int i = 0; i < buildingData.length; i++)
+//        {
+//            for (int j = 0; j < buildingData[0].length; j++)
+//            {
+//                if (j == (buildingData[0].length - 1))
+//                {
+//                    double[] temp = {buildingData[i][0], buildingData[i][1]};
+//                    double[] temp2 = {traingSet[i][0], traingSet[i][1]};
+//                    buildingData[i][j] = rbfNeuralNetwork2.findCorrectAnswer(temp);
+//                    traingSet[i][j] = rbfNeuralNetwork2.findCorrectAnswer(temp2);
+//                }
+//                else
+//                {
+//                    buildingData[i][j] = Math.random() * 10 - 5;
+//                    traingSet[i][j] = Math.random() * 10 - 5;
+//                }
+//            }
+//        }
+//
+//        rbfNeuralNetwork2.createTrainingDataWithKClustering(500, buildingData);
 
-        RBFNeuralNetwork rbfNeuralNetwork2 = new RBFNeuralNetwork(2, 0.01, 0);
-        double[][] buildingData = new double[250000][3];
-        double[][] traingSet = new double[250000][3];
+        rbfNeuralNetwork2.createRandomTrainingDataWithKClustering(500, 100000);
 
-        for (int i = 0; i < buildingData.length; i++)
-        {
-            for (int j = 0; j < buildingData[0].length; j++)
-            {
-                if (j == (buildingData[0].length - 1))
-                {
-                    double[] temp = {buildingData[i][0], buildingData[i][1]};
-                    double[] temp2 = {traingSet[i][0], traingSet[i][1]};
-                    buildingData[i][j] = rbfNeuralNetwork2.findCorrectAnswer(temp);
-                    traingSet[i][j] = rbfNeuralNetwork2.findCorrectAnswer(temp2);
-                }
-                else
-                {
-                    buildingData[i][j] = Math.random() * 10 - 5;
-                    traingSet[i][j] = Math.random() * 10 - 5;
-                }
-            }
-        }
-
-        rbfNeuralNetwork2.createTrainingDataWithKClustering(500, buildingData);
-
-        errors = percentageOnNumb(rbfNeuralNetwork2, 50, 2);
+        errors = percentageOnNumb(rbfNeuralNetwork2, 50, 5);
         System.out.println("");
         System.out.println("Using predetermined building and training data");
         System.out.println("Error percentage: " + errors[0]);
         System.out.println("Total Error: " + errors[1]);
         System.out.println("Squared Error: " + errors[2]);
 
-        rbfNeuralNetwork2.train(traingSet);
+        rbfNeuralNetwork2.trainRandom(100);
 
-        errors = percentageOnNumb(rbfNeuralNetwork2, 10000, 2);
+        errors = percentageOnNumb(rbfNeuralNetwork2, 10000, 5);
         System.out.println("");
         System.out.println("Using predetermined building and training data");
         System.out.println("Error percentage: " + errors[0]);
         System.out.println("Total Error: " + errors[1]);
         System.out.println("Squared Error: " + errors[2]);
     }
-    
 
+
+    /**
+     * This method returns the percentage error for two data points
+     */
     public static double getPercentage(double est, double act)
     {
         return ((est - act) / act) * 100;
@@ -126,7 +94,7 @@ public class RunRBF
             double act = rbfNeuralNetwork.findCorrectAnswer(inputs);
             totalError += Math.abs(getPercentage(est, act));
             error += Math.abs(est - act);
-            squaredError = (est - act) * (est - act);
+            squaredError += (est - act) * (est - act);
         }
         totalError /= numb;
 

@@ -7,12 +7,14 @@ public class RBFNeuralNetwork
     int n;
     double ada = 0.05;
     int basisFunction;
+    int repeats;
 
-    public RBFNeuralNetwork(int n, double ada, int basisFunction)
+    public RBFNeuralNetwork(int n, double ada, int basisFunction, int repeats)
     {
         this.n = n;
         this.ada = ada;
         this.basisFunction = basisFunction;
+        this.repeats = repeats;
     }
 
     /**
@@ -60,7 +62,7 @@ public class RBFNeuralNetwork
             data = buildingSet;
         }
         kMeansClustering clusterer = new kMeansClustering(data, this.n);
-        double[][] createdCentroids = clusterer.run(5.0, centroids);
+        double[][] createdCentroids = clusterer.run(1.0, centroids);
         this.hiddenNodes = new HiddenLayer[centroids];
         this.nodeWeights = new double[centroids];
 
@@ -72,7 +74,7 @@ public class RBFNeuralNetwork
 
         for (int l = 0; l < centroids; l++)
         {
-            this.nodeWeights[l] = Math.random();
+            this.nodeWeights[l] = Math.random();// * 2 - 1;
         }
     }
 
@@ -181,6 +183,7 @@ public class RBFNeuralNetwork
      */
     public void trainRandom(int size)
     {
+        double[][] inputs = new double[size][];
         for (int i = 0; i < size; i++)
         {
             double[] input = new double[this.n];
@@ -189,10 +192,24 @@ public class RBFNeuralNetwork
                 input[j] = Math.random() * 10 - 5;
             }
 
+            inputs[i] = input;
+
             double correctAnswer = findCorrectAnswer(input);
             double rbfAnswer = getResult(input);
             double error = correctAnswer - rbfAnswer;
             backProp(input, error, rbfAnswer);
+        }
+
+
+        for (int k = 0; k < this.repeats; k++)
+        {
+            for (int l = 0; l < size; l++)
+            {
+                double correctAnswer = findCorrectAnswer(inputs[l]);
+                double rbfAnswer = getResult(inputs[l]);
+                double error = correctAnswer - rbfAnswer;
+                backProp(inputs[l], error, rbfAnswer);
+            }
         }
     }
 
