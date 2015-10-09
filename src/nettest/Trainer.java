@@ -89,7 +89,7 @@ public class Trainer
         // { Numbers of nodes in each hidden layer, number of clusters }
         int[][] clusters = new int[][]
         {
-            {100,10000}
+            {100,100}
         };
         
         // Momentums for the Feed Forward neural net
@@ -191,7 +191,7 @@ public class Trainer
         int[] sizesArray = new int[hidden + 2];
         sizesArray[0] = dimensions;
         for(int i = 1; i < sizesArray.length - 1; i++) {
-            sizesArray[i] = clusters[0];
+            sizesArray[i] = 2;
         }
         sizesArray[sizesArray.length-1] = dimensions;
         
@@ -210,7 +210,7 @@ public class Trainer
             double belowRight = 0.0;
             double belowWrong = 0.0;
             
-            for(int j = 0; j < size; j++) {
+            for(int j = 0; j < datasets[1].length; j++) {
                 int index = datasets[1][j].length - 1;
                 double actualValue = datasets[1][j][index];
                 double offsetValue = plusOrMinus10(actualValue);
@@ -259,13 +259,13 @@ public class Trainer
             belowRight = 0.0;
             belowWrong = 0.0;
             
-            for(int j = 0; j < size; j++) {
-                int index = datasets[1][j].length - 1;
-                double actualValue = datasets[1][j][index];
+            for(int j = 0; j < datasets[0].length; j++) {
+                int index = datasets[0][j].length - 1;
+                double actualValue = datasets[0][j][index];
                 double offsetValue = plusOrMinus10(actualValue);
-                datasets[1][j][index] = offsetValue;
-                double[] prediction = ff.compute(datasets[1][j]);
-                datasets[1][j][index] = actualValue;
+                datasets[0][j][index] = offsetValue;
+                double[] prediction = ff.compute(datasets[0][j]);
+                datasets[0][j][index] = actualValue;
                 
                 boolean abovePredicted = prediction[0] > prediction[1];
                 boolean aboveActual = offsetValue > actualValue;
@@ -287,7 +287,7 @@ public class Trainer
                 confidenceSum += confidence;
             }
         
-            confidenceSum /= datasets[1].length;
+            confidenceSum /= datasets[0].length;
             
             output[i][5] = aboveRight;
             output[i][6] = aboveWrong;
@@ -324,15 +324,15 @@ public class Trainer
             double belowWrong = 0.0;
             double varianceSum = 0.0;
         
-            for(int j = 0; j < size; j++) {
+            for(int j = 0; j < datasets[1].length; j++) {
                 double predictedValue = rbf.getResult(datasets[1][j]);
                 double actualValue = datasets[1][j][datasets[1][j].length - 2];
                 double offsetValue = datasets[1][j][datasets[1][j].length - 1];
                 
                 varianceSum += Math.abs(predictedValue - actualValue);
                 
-                boolean abovePredicted = rbf.aboveValue(datasets[1][j], offsetValue);
-                boolean aboveActual = actualValue < predictedValue;
+                boolean abovePredicted = predictedValue < offsetValue;
+                boolean aboveActual = actualValue < offsetValue;
                 if (abovePredicted && aboveActual) {
                     aboveRight += 1.0;
                 } else if (abovePredicted) {
@@ -363,15 +363,15 @@ public class Trainer
             belowWrong = 0.0;
             varianceSum = 0.0;
         
-            for(int j = 0; j < size; j++) {
+            for(int j = 0; j < datasets[0].length; j++) {
                 double predictedValue = rbf.getResult(datasets[0][j]);
                 double actualValue = datasets[0][j][datasets[0][j].length - 2];
                 double offsetValue = datasets[0][j][datasets[0][j].length - 1];
                 
                 varianceSum += Math.abs(predictedValue - actualValue);
                 
-                boolean abovePredicted = rbf.aboveValue(datasets[0][j], offsetValue);
-                boolean aboveActual = actualValue < predictedValue;
+                boolean abovePredicted = actualValue < predictedValue;
+                boolean aboveActual = actualValue < offsetValue;
                 if (abovePredicted && aboveActual) {
                     aboveRight += 1.0;
                 } else if (abovePredicted) {
@@ -574,8 +574,8 @@ public class Trainer
                                             
                                             System.out.println("------------RBF Neural Network------------");
                                             System.out.println("  Correct above guesses: " + results[0][experimentIndex][0][0]);
-                                            System.out.println("  Correct below guesses: " + results[0][experimentIndex][0][1]);
-                                            System.out.println("Incorrect above guesses: " + results[0][experimentIndex][0][2]);
+                                            System.out.println("Incorrect above guesses: " + results[0][experimentIndex][0][1]);
+                                            System.out.println("  Correct below guesses: " + results[0][experimentIndex][0][2]);
                                             System.out.println("Incorrect above guesses: " + results[0][experimentIndex][0][3]);
                                             System.out.println("       Average variance: " + results[0][experimentIndex][0][4]);
                                             System.out.println();
@@ -597,8 +597,8 @@ public class Trainer
                                             
                                             System.out.println("------------RBF Neural Network------------");
                                             System.out.println("  Correct above guesses: " + results[1][experimentIndex][1][0]);
-                                            System.out.println("  Correct below guesses: " + results[1][experimentIndex][1][1]);
-                                            System.out.println("Incorrect above guesses: " + results[1][experimentIndex][1][2]);
+                                            System.out.println("Incorrect above guesses: " + results[1][experimentIndex][1][1]);
+                                            System.out.println("  Correct below guesses: " + results[1][experimentIndex][1][2]);
                                             System.out.println("Incorrect above guesses: " + results[1][experimentIndex][1][3]);
                                             System.out.println("       Average variance: " + results[1][experimentIndex][1][4]);
                                             System.out.println();
