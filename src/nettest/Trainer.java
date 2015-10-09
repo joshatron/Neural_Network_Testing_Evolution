@@ -107,7 +107,7 @@ public class Trainer
         runExperiment(sizes,dimensions,repeats,rbfBasisFunction,activationFunction,learningRate,clusters,momentum,hiddenNum);
     }
     
-    public static FFParameters setFeedforward() {
+    public static void setFeedforward() {
         Scanner in = new Scanner(System.in);
         System.out.println("-----Set the parameters for the feed forward neural net-----");
         System.out.print("Training set size: ");
@@ -147,10 +147,9 @@ public class Trainer
         System.out.format("Hidden layers: %d, Inputs: %d, Examples: %d, Outputs: %d,%nLearning rate: %f, Momentum: %f, Activation function: %s%n",
                 hiddenLayers, sizesLayers[0], sizesLayers[1], sizesLayers[2], learningRate, momentum, selection);
         
-        return new FFParameters(hiddenLayers, sizesLayers, learningRate, momentum, activationFunction, trainingSetSize);
     }
     
-    public static RBFParameters setRBF() {
+    public static void setRBF() {
         Scanner in = new Scanner(System.in);
         System.out.println("-----Set the parameters for the RBF neural net-----");
         System.out.print("Training set size: ");
@@ -172,7 +171,6 @@ public class Trainer
         System.out.format("Training set size: %d, Building set size: %d, Inputs: %d, Number of clusters: %d, Learning rate: %f%n",
                 trainingSetSize, buildingSetSize, numInputs, numbOfClusters, learningRate);
         
-        return new RBFParameters(numInputs, buildingSetSize, trainingSetSize, learningRate, numbOfClusters);
     }
     
     public static double[][] trainFF(
@@ -572,12 +570,20 @@ public class Trainer
                                                     hiddenNum[i], 
                                                     datasets);
                                             
+                                            double[] statistics = new double[5];
+                                            for (int j = 0; j < 5; j++) {
+                                                for (int k = 0; k < 10; k++) {
+                                                    statistics[k%5] += results[0][experimentIndex][j][k];
+                                                }
+                                            }
+                                            statistics[4] /= 10;
+                                            
                                             System.out.println("------------RBF Neural Network------------");
-                                            System.out.println("  Correct above guesses: " + results[0][experimentIndex][0][0]);
-                                            System.out.println("Incorrect above guesses: " + results[0][experimentIndex][0][1]);
-                                            System.out.println("  Correct below guesses: " + results[0][experimentIndex][0][2]);
-                                            System.out.println("Incorrect above guesses: " + results[0][experimentIndex][0][3]);
-                                            System.out.println("       Average variance: " + results[0][experimentIndex][0][4]);
+                                            System.out.println("  Correct above guesses: " + statistics[0]);
+                                            System.out.println("Incorrect above guesses: " + statistics[1]);
+                                            System.out.println("  Correct below guesses: " + statistics[2]);
+                                            System.out.println("Incorrect above guesses: " + statistics[3]);
+                                            System.out.println("       Average variance: " + statistics[4]);
                                             System.out.println();
                                             //swapTrainingAndTesting(datasets);
                                             
@@ -595,13 +601,23 @@ public class Trainer
                                                     hiddenNum[i], 
                                                     datasets);
                                             
-                                            System.out.println("------------RBF Neural Network------------");
-                                            System.out.println("  Correct above guesses: " + results[1][experimentIndex][1][0]);
-                                            System.out.println("Incorrect above guesses: " + results[1][experimentIndex][1][1]);
-                                            System.out.println("  Correct below guesses: " + results[1][experimentIndex][1][2]);
-                                            System.out.println("Incorrect above guesses: " + results[1][experimentIndex][1][3]);
-                                            System.out.println("       Average variance: " + results[1][experimentIndex][1][4]);
+                                            statistics = new double[5];
+                                            for (int j = 0; j < 5; j++) {
+                                                for (int k = 0; k < 10; k++) {
+                                                    statistics[k%5] += results[1][experimentIndex][j][k];
+                                                }
+                                            }
+                                            
+                                            statistics[4] /= 10;
+                                            
+                                            System.out.println("--------Feed Forward Neural Network--------");
+                                            System.out.println("  Correct above guesses: " + statistics[0]);
+                                            System.out.println("Incorrect above guesses: " + statistics[1]);
+                                            System.out.println("  Correct below guesses: " + statistics[2]);
+                                            System.out.println("Incorrect above guesses: " + statistics[3]);
+                                            System.out.println("       Average variance: " + statistics[4]);
                                             System.out.println();
+                                            
                                             experimentIndex++;
                                         }
                                     }
