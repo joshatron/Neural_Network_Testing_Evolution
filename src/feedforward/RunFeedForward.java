@@ -13,6 +13,7 @@ public class RunFeedForward
      * @param learningRate learning rate for the net
      * @param momentum momentum for the net
      * @param activationFunction activation function to use
+     * @param timesThrough number of times to run through the examples
      * @return the final net that was created
      */
     public static FeedForwardNeuralNetwork run(double[][] examples, int hiddenLayers, int[] sizesLayers,
@@ -21,6 +22,7 @@ public class RunFeedForward
     {
         FeedForwardNeuralNetwork net = new FeedForwardNeuralNetwork(hiddenLayers, sizesLayers, activationFunction,
                                                                     momentum, learningRate);
+        //run through the data set however many times
         for(int t = 0; t < timesThrough; t++)
         {
             //for each examples
