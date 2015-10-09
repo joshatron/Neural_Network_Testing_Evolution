@@ -183,7 +183,7 @@ public class Trainer
                 int[] clusters,
                 double momentums,
                 int hidden,
-                double[][][] datasets) 
+                double[][] dataset) 
     {
         // Create the sizes array used by the feed forward neural net
         int[] sizesArray = new int[hidden + 2];
@@ -198,6 +198,7 @@ public class Trainer
         
         // For 5 repetitions of 2-fold cross validation
         for (int i = 0; i < 5; i++) {
+            double[][][] datasets = partitionData(dataset);
             
             // First: train on datasets[0], test on datasets[1]
             FeedForwardNeuralNetwork ff = RunFeedForward.run(datasets[0], hidden, sizesArray, learningRate, momentums, activationFunction, repeats[1]);
@@ -304,12 +305,13 @@ public class Trainer
                 int[] clusters,
                 double momentums,
                 int hidden,
-                double[][][] datasets) 
+                double[][] dataset) 
         {
         
         double[][] output = new double[5][10];
-        
+                
         for (int i = 0; i < 5; i++) {
+            double[][][] datasets = partitionData(dataset);
             
             RBFNeuralNetwork rbf = RunRBF.testRBF(datasets[0], datasets[0], learningRate, clusters[1], rbfBasisFunction, repeats[1]);
         
@@ -536,10 +538,8 @@ public class Trainer
         // Loop through all possible combinations of variables (most arrays should be of size 1)
         for (int a = 0; a < sizes.length; a++) {
             for (int b = 0; b < dimensions.length; b++) {
-                // Generate a dataset of size a with b inputs
-                DataTools.generateData(dimensions[b],sizes[a]);
-                // Partition the dataset into a training set and a testing set
-                double[][][] datasets = partitionData(DataTools.getDataFromFile(dimensions[b], sizes[a]));
+                // Retrieve a dataset of size a with b inputs, or generate one if it does not exist
+                double[][] datasets = DataTools.getDataFromFile(dimensions[b], sizes[a]);
                 
                 for (int c = 0; c < repeats.length; c++) {
                     for (int d = 0; d < rbfBasisFunction.length; d++) {
@@ -584,8 +584,8 @@ public class Trainer
                                             
                                             System.out.println("------------RBF Neural Network------------");
                                             System.out.println("  Correct above guesses: " + statistics[0]);
-                                            System.out.println("  Correct below guesses: " + statistics[1]);
-                                            System.out.println("Incorrect above guesses: " + statistics[2]);
+                                            System.out.println("Incorrect above guesses: " + statistics[1]);
+                                            System.out.println("  Correct below guesses: " + statistics[2]);
                                             System.out.println("Incorrect below guesses: " + statistics[3]);
                                             System.out.println("       Average variance: " + statistics[4]);
                                             System.out.println();
@@ -616,8 +616,8 @@ public class Trainer
                                             
                                             System.out.println("--------Feed Forward Neural Network--------");
                                             System.out.println("  Correct above guesses: " + statistics[0]);
-                                            System.out.println("  Correct below guesses: " + statistics[1]);
-                                            System.out.println("Incorrect above guesses: " + statistics[2]);
+                                            System.out.println("Incorrect above guesses: " + statistics[1]);
+                                            System.out.println("  Correct below guesses: " + statistics[2]);
                                             System.out.println("Incorrect below guesses: " + statistics[3]);
                                             System.out.println("       Average variance: " + statistics[4]);
                                             System.out.println();
