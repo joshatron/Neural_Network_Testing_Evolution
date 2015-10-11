@@ -32,20 +32,22 @@ public class DataTools {
      * @param numInputs number of inputs for the Rosenbrock function
      * @param setSize   number of instances the output dataset will have
      */
-    public static void generateData(int numInputs, int setSize) {
+    public static double[][] generateData(int numInputs, int setSize) {
         JSONObject dataset = new JSONObject();
-
+        double[][] data = new double[setSize][numInputs+1];
         for (int i = 0; i < setSize; i++) {
             double[] inputs = new double[numInputs]; // Next instance's inputs
 
             for (int j = 0; j < numInputs; j++) {   // Generate a random value for each input
                 inputs[j] = Math.random() * domainSize - domainSize/2.0f;
+                data[i][j] = inputs[j];
             }
 
             JSONArray instance = new JSONArray(inputs);
 
             // Set the final double to the output of the Rosenbrock function
-            instance = instance.put(rosenbrock(inputs));
+            data[i][numInputs] = rosenbrock(inputs);
+            instance = instance.put(data[i][numInputs]);
 
             String name = String.format("a%d", i);
             dataset.put(name, instance);
@@ -57,6 +59,7 @@ public class DataTools {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+        return data;
     }
 
     /**
@@ -83,25 +86,8 @@ public class DataTools {
                 }
             }
         } catch (IOException e) {
-            generateData(numInputs, setSize);
-            try {
-                String json = FileUtils.readFileToString(file);
-                JSONObject jsonObject = new JSONObject(json);
-
-                data = new double[setSize][numInputs + 1];
-
-                for (int i = 0; i < setSize; i++) {
-                    JSONArray instance = jsonObject.getJSONArray(String.format("a%d", i));
-
-                    for (int j = 0; j < numInputs+1; j++) {
-                        data[i][j] = instance.getDouble(j);
-                    }
-                }
-            } catch (IOException error) {
-                System.err.println(error.getMessage());
-                return null;
-            }
-            return null;
+            System.out.println("Dataset does not exist. Creating a new dataset.");
+            data = generateData(numInputs, setSize);
         }
 
         return data;
