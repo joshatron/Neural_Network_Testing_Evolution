@@ -29,7 +29,7 @@ public class Trainer
      *  Dimensions:
      *  2, 3, 4*, 5, 6
      *
-     *  RBF basis function: gaussian*, cubed, multiquad
+     *  RBF basis function: gaussian*, cubed, multi-quad
      *
      *  FF activation function: 
      *  linear, log*
@@ -59,7 +59,7 @@ public class Trainer
         // Numbers of inputs to the Rosenbrock function
         int[] dimensions = new int[] 
         {
-            4
+            6
         };
         
         // Numbers of times to repeat training on the same data
@@ -77,7 +77,7 @@ public class Trainer
         // For the Feed Forward net
         ActivationFunction[] activationFunction = new ActivationFunction[] 
         {
-            ActivationFunction.LINEAR
+            ActivationFunction.LOGISTIC
         };
         
         // Learning rates
@@ -187,14 +187,14 @@ public class Trainer
     {
         // Create the sizes array used by the feed forward neural net
         int[] sizesArray = new int[hidden + 2];
-        sizesArray[0] = dimensions;
+        sizesArray[0] = dimensions + 1;
         for(int i = 1; i < sizesArray.length - 1; i++) {
-            sizesArray[i] = 2;
+            sizesArray[i] = clusters[0];
         }
-        sizesArray[sizesArray.length-1] = dimensions;
+        sizesArray[sizesArray.length-1] = 2;
         
         // Initialize the storage for the output of this test.
-        double[][] output = new double[5][2];
+        double[][] output = new double[5][10];
         
         // For 5 repetitions of 2-fold cross validation
         for (int i = 0; i < 5; i++) {
@@ -216,7 +216,8 @@ public class Trainer
                 datasets[1][j][index] = offsetValue;
                 double[] prediction = ff.compute(datasets[1][j]);
                 datasets[1][j][index] = actualValue;
-                
+                //System.out.println("confidence correct: " + prediction[1] + "\nconfidence incorrect: " + prediction[0]);
+
                 boolean abovePredicted =  prediction[1] < prediction[0];
                 boolean aboveActual = actualValue < offsetValue;
                 double confidence;
@@ -329,20 +330,18 @@ public class Trainer
                 
                 varianceSum += Math.abs(predictedValue - actualValue);
                 
-                datasets[1][j][index] = offsetValue;
-                boolean abovePredicted = rbf.aboveValue(datasets[1][j],actualValue);
-                datasets[1][j][index] = actualValue;
-                
+                boolean abovePredicted = rbf.aboveValue(datasets[1][j], offsetValue);
+
                 boolean aboveActual = actualValue < offsetValue;
-                
+
                 if (abovePredicted && aboveActual) {
-                    aboveRight += 1.0;
-                } else if (abovePredicted) {
                     aboveWrong += 1.0;
+                } else if (abovePredicted) {
+                    aboveRight += 1.0;
                 } else if (aboveActual) {
-                    belowWrong += 1.0;
-                } else {
                     belowRight += 1.0;
+                } else {
+                    belowWrong += 1.0;
                 }
             }
         
@@ -351,7 +350,10 @@ public class Trainer
             output[i][1] = aboveWrong;
             output[i][2] = belowRight;
             output[i][3] = belowWrong;
-            output[i][4] = varianceSum;
+            output[i][4] = varianceSum; // change to average percent error
+            // 5 -> standard deviation
+            // 6 -> min error
+            // 7 -> max error
             
             
             rbf = RunRBF.testRBF(datasets[1], datasets[1], learningRate, clusters[1], rbfBasisFunction, repeats[1]);
@@ -370,20 +372,18 @@ public class Trainer
                 
                 varianceSum += Math.abs(predictedValue - actualValue);
                 
-                datasets[0][j][index] = offsetValue;
-                boolean abovePredicted = rbf.aboveValue(datasets[0][j],actualValue);
-                datasets[0][j][index] = actualValue;
-                
+                boolean abovePredicted = rbf.aboveValue(datasets[0][j], offsetValue);
+
                 boolean aboveActual = actualValue < offsetValue;
                 
                 if (abovePredicted && aboveActual) {
-                    aboveRight += 1.0;
-                } else if (abovePredicted) {
                     aboveWrong += 1.0;
+                } else if (abovePredicted) {
+                    aboveRight += 1.0;
                 } else if (aboveActual) {
-                    belowWrong += 1.0;
-                } else {
                     belowRight += 1.0;
+                } else {
+                    belowWrong += 1.0;
                 }
             }
         
@@ -398,8 +398,9 @@ public class Trainer
         return output;
     }
     
-    private static double plusOrMinus10(double output) {
-        return Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 10 * Math.random() + output;
+    public static double plusOrMinus10(double output) {
+        double newVal = output + output * 0.1 * Math.pow(-1, (double)(rand.nextInt(2) + 1)); //Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 2 * output * Math.random() + output;
+        return newVal;
     }
     
     private static double[][][] swapTrainingAndTesting(double[][][] trainingAndTesting) {
@@ -551,7 +552,9 @@ public class Trainer
                                             
                                             // Print information about the next experiment
                                             System.out.println("Experiment " + experimentIndex);
+                                            System.out.println("# of training examples" + sizes[a]);
                                             System.out.println("Dataset size: " + dimensions[b]);
+                                            System.out.println("Repeats:" + repeats[c]);
                                             System.out.println("RBF basis function: " + rbfBasisFunction[d]);
                                             System.out.println("FF activation function: " + activationFunction[e]);
                                             System.out.println("Learning rate: " + learningRate[f]);

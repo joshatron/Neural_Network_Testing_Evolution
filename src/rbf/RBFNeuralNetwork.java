@@ -46,7 +46,6 @@ public class RBFNeuralNetwork
         double[][] data;
         if (buildingSet[0].length > this.n)
         {
-            System.out.println("redoing data");
             data = new double[buildingSet.length][this.n];
 
             for (int i = 0; i < buildingSet.length; i++)
