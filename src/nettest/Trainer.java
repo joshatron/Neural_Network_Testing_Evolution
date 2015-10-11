@@ -77,7 +77,7 @@ public class Trainer
         // For the Feed Forward net
         ActivationFunction[] activationFunction = new ActivationFunction[] 
         {
-            ActivationFunction.LINEAR
+            ActivationFunction.LOGISTIC
         };
         
         // Learning rates
@@ -187,14 +187,14 @@ public class Trainer
     {
         // Create the sizes array used by the feed forward neural net
         int[] sizesArray = new int[hidden + 2];
-        sizesArray[0] = dimensions;
+        sizesArray[0] = dimensions + 1;
         for(int i = 1; i < sizesArray.length - 1; i++) {
-            sizesArray[i] = 2;
+            sizesArray[i] = clusters[0];
         }
-        sizesArray[sizesArray.length-1] = dimensions;
+        sizesArray[sizesArray.length-1] = 2;
         
         // Initialize the storage for the output of this test.
-        double[][] output = new double[5][2];
+        double[][] output = new double[5][10];
         
         // For 5 repetitions of 2-fold cross validation
         for (int i = 0; i < 5; i++) {
@@ -216,7 +216,8 @@ public class Trainer
                 datasets[1][j][index] = offsetValue;
                 double[] prediction = ff.compute(datasets[1][j]);
                 datasets[1][j][index] = actualValue;
-                
+                //System.out.println("confidence correct: " + prediction[1] + "\nconfidence incorrect: " + prediction[0]);
+
                 boolean abovePredicted =  prediction[1] < prediction[0];
                 boolean aboveActual = actualValue < offsetValue;
                 double confidence;
