@@ -53,13 +53,17 @@ public class Trainer
         // Dataset sizes
         int[] sizes = new int[] 
         {
-            100000
+            1000,
+            50000,
+            100000,
+            500000,
+            1000000
         };
         
         // Numbers of inputs to the Rosenbrock function
         int[] dimensions = new int[] 
         {
-            6
+            4
         };
         
         // Numbers of times to repeat training on the same data
@@ -312,6 +316,7 @@ public class Trainer
         double[][] output = new double[5][10];
                 
         for (int i = 0; i < 5; i++) {
+            System.out.println("Running cross-validation, on part: " + i);
             double[][][] datasets = partitionData(dataset);
             
             RBFNeuralNetwork rbf = RunRBF.testRBF(datasets[0], datasets[0], learningRate, clusters[1], rbfBasisFunction, repeats[1]);
