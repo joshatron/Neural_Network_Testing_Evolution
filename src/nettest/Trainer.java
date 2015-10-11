@@ -53,7 +53,7 @@ public class Trainer
         // Dataset sizes
         int[] sizes = new int[] 
         {
-            10000
+            100000
         };
         
         // Numbers of inputs to the Rosenbrock function
@@ -593,34 +593,34 @@ public class Trainer
                                             
                                             
                                             // Train and test a Feedforward neural net
-                                            results[1][experimentIndex] =  trainFF(
-                                                    sizes[a], 
-                                                    dimensions[b], 
-                                                    repeats[c], 
-                                                    rbfBasisFunction[d], 
-                                                    activationFunction[e], 
-                                                    learningRate[f], 
-                                                    clusters[g],
-                                                    momentum[h], 
-                                                    hiddenNum[i], 
-                                                    datasets);
-                                            
-                                            statistics = new double[5];
-                                            for (int j = 0; j < 5; j++) {
-                                                for (int k = 0; k < 10; k++) {
-                                                    statistics[k%5] += results[1][experimentIndex][j][k];
-                                                }
-                                            }
-                                            
-                                            statistics[4] /= 10;
-                                            
-                                            System.out.println("--------Feed Forward Neural Network--------");
-                                            System.out.println("  Correct above guesses: " + statistics[0]);
-                                            System.out.println("Incorrect above guesses: " + statistics[1]);
-                                            System.out.println("  Correct below guesses: " + statistics[2]);
-                                            System.out.println("Incorrect below guesses: " + statistics[3]);
-                                            System.out.println("       Average variance: " + statistics[4]);
-                                            System.out.println();
+//                                            results[1][experimentIndex] =  trainFF(
+//                                                    sizes[a],
+//                                                    dimensions[b],
+//                                                    repeats[c],
+//                                                    rbfBasisFunction[d],
+//                                                    activationFunction[e],
+//                                                    learningRate[f],
+//                                                    clusters[g],
+//                                                    momentum[h],
+//                                                    hiddenNum[i],
+//                                                    datasets);
+//
+//                                            statistics = new double[5];
+//                                            for (int j = 0; j < 5; j++) {
+//                                                for (int k = 0; k < 10; k++) {
+//                                                    statistics[k%5] += results[1][experimentIndex][j][k];
+//                                                }
+//                                            }
+//
+//                                            statistics[4] /= 10;
+//
+//                                            System.out.println("--------Feed Forward Neural Network--------");
+//                                            System.out.println("  Correct above guesses: " + statistics[0]);
+//                                            System.out.println("Incorrect above guesses: " + statistics[1]);
+//                                            System.out.println("  Correct below guesses: " + statistics[2]);
+//                                            System.out.println("Incorrect below guesses: " + statistics[3]);
+//                                            System.out.println("       Average variance: " + statistics[4]);
+//                                            System.out.println();
                                             
                                             experimentIndex++;
                                         }
