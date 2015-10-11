@@ -53,17 +53,13 @@ public class Trainer
         // Dataset sizes
         int[] sizes = new int[] 
         {
-            1000,
-            50000,
-            100000,
-            500000,
-            1000000
+            100000
         };
         
         // Numbers of inputs to the Rosenbrock function
         int[] dimensions = new int[] 
         {
-            4
+            2,3,4,5,6
         };
         
         // Numbers of times to repeat training on the same data
@@ -75,7 +71,7 @@ public class Trainer
         // Basis functions for the RBF neural network
         int[] rbfBasisFunction = new int[] 
         {
-            0
+            0,1,2
         };
         
         // For the Feed Forward net
