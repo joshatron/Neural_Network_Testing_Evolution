@@ -223,6 +223,7 @@ public class FeedForwardNeuralNetwork
      */
     public double[] compute(double[] inputs)
     {
+        inputs[inputs.length - 1] = inputs[inputs.length - 1] / 10000;
         //if input wrong size, return
         if(inputs.length != sizes[0])
         {
@@ -272,6 +273,12 @@ public class FeedForwardNeuralNetwork
      */
     public void backprop(double[] inputs, double[] expectedOutputs)
     {
+        inputs[inputs.length - 1] = inputs[inputs.length - 1] / 10000;
+        /*for(int k = 0; k < weights.length; k++)
+        {
+            System.out.print(weights[k] + ", ");
+        }
+        System.out.println();*/
         //if input or output wrong size, return
         if(inputs.length != sizes[0])
         {
@@ -295,6 +302,7 @@ public class FeedForwardNeuralNetwork
             allOutputs[0][k] = inputs[k];
         }
 
+        //System.out.println("outputs");
         //for each layer after the input
         for(int k = 1; k < hiddenLayers + 2; k++)
         {
@@ -306,11 +314,14 @@ public class FeedForwardNeuralNetwork
                 for(int t = 0; t < lastLayer; t++)
                 {
                     sum += allOutputs[k - 1][t] * getWeight(k - 1, t, k, a);
+                    //System.out.println(allOutputs[k - 1][t] + " * " + getWeight(k - 1, t, k, a));
                 }
                 sum += biasNum * getWeight(-1, 0, k, a);
                 allOutputs[k][a] = applyActivationFunction(sum);
                 allErrors[k][a] = applyActivationFunctionDerivative(sum);
+                //System.out.print("sum: " + sum + "(" + allOutputs[k][a] + "), ");
             }
+            //System.out.println();
             lastLayer = sizes[k];
         }
 
@@ -335,6 +346,9 @@ public class FeedForwardNeuralNetwork
                 else
                 {
                     allErrors[k][a] *= (expectedOutputs[a] - allOutputs[k][a]);
+                    /*System.out.println("expected: " + expectedOutputs[a]);
+                    System.out.println("all: " + allOutputs[k][a]);
+                    System.out.println("error" + allErrors[k][a]);*/
                 }
 
                 //for each weight node takes as input
@@ -350,6 +364,7 @@ public class FeedForwardNeuralNetwork
                 }
             }
         }
+
     }
 
     /**
