@@ -83,7 +83,24 @@ public class DataTools {
                 }
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            generateData(numInputs, setSize);
+            try {
+                String json = FileUtils.readFileToString(file);
+                JSONObject jsonObject = new JSONObject(json);
+
+                data = new double[setSize][numInputs + 1];
+
+                for (int i = 0; i < setSize; i++) {
+                    JSONArray instance = jsonObject.getJSONArray(String.format("a%d", i));
+
+                    for (int j = 0; j < numInputs+1; j++) {
+                        data[i][j] = instance.getDouble(j);
+                    }
+                }
+            } catch (IOException error) {
+                System.err.println(error.getMessage());
+                return null;
+            }
             return null;
         }
 
