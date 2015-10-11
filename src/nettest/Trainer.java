@@ -8,12 +8,6 @@ import rbf.*;
 
 /**
  * Created by joshua on 9/22/15.
- * 
- * This will cause a merge conflict
- *
- *
- *
- *
  */
 
 public class Trainer
@@ -65,7 +59,7 @@ public class Trainer
         // Numbers of inputs to the Rosenbrock function
         int[] dimensions = new int[] 
         {
-            4
+            6
         };
         
         // Numbers of times to repeat training on the same data
@@ -356,7 +350,10 @@ public class Trainer
             output[i][1] = aboveWrong;
             output[i][2] = belowRight;
             output[i][3] = belowWrong;
-            output[i][4] = varianceSum;
+            output[i][4] = varianceSum; // change to average percent error
+            // 5 -> standard deviation
+            // 6 -> min error
+            // 7 -> max error
             
             
             rbf = RunRBF.testRBF(datasets[1], datasets[1], learningRate, clusters[1], rbfBasisFunction, repeats[1]);
@@ -401,7 +398,7 @@ public class Trainer
         return output;
     }
     
-    private static double plusOrMinus10(double output) {
+    public static double plusOrMinus10(double output) {
         double newVal = output + output * 0.1 * Math.pow(-1, (double)(rand.nextInt(2) + 1)); //Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 2 * output * Math.random() + output;
         return newVal;
     }
