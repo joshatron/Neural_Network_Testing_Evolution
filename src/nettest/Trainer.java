@@ -29,7 +29,7 @@ public class Trainer
      *  Dimensions:
      *  2, 3, 4*, 5, 6
      *
-     *  RBF basis function: gaussian*, cubed, multiquad
+     *  RBF basis function: gaussian*, cubed, multi-quad
      *
      *  FF activation function: 
      *  linear, log*
@@ -329,20 +329,18 @@ public class Trainer
                 
                 varianceSum += Math.abs(predictedValue - actualValue);
                 
-                datasets[1][j][index] = offsetValue;
-                boolean abovePredicted = rbf.aboveValue(datasets[1][j],actualValue);
-                datasets[1][j][index] = actualValue;
-                
+                boolean abovePredicted = rbf.aboveValue(datasets[1][j], offsetValue);
+
                 boolean aboveActual = actualValue < offsetValue;
-                
+
                 if (abovePredicted && aboveActual) {
-                    aboveRight += 1.0;
-                } else if (abovePredicted) {
                     aboveWrong += 1.0;
+                } else if (abovePredicted) {
+                    aboveRight += 1.0;
                 } else if (aboveActual) {
-                    belowWrong += 1.0;
-                } else {
                     belowRight += 1.0;
+                } else {
+                    belowWrong += 1.0;
                 }
             }
         
@@ -370,20 +368,18 @@ public class Trainer
                 
                 varianceSum += Math.abs(predictedValue - actualValue);
                 
-                datasets[0][j][index] = offsetValue;
-                boolean abovePredicted = rbf.aboveValue(datasets[0][j],actualValue);
-                datasets[0][j][index] = actualValue;
-                
+                boolean abovePredicted = rbf.aboveValue(datasets[0][j], offsetValue);
+
                 boolean aboveActual = actualValue < offsetValue;
                 
                 if (abovePredicted && aboveActual) {
-                    aboveRight += 1.0;
-                } else if (abovePredicted) {
                     aboveWrong += 1.0;
+                } else if (abovePredicted) {
+                    aboveRight += 1.0;
                 } else if (aboveActual) {
-                    belowWrong += 1.0;
-                } else {
                     belowRight += 1.0;
+                } else {
+                    belowWrong += 1.0;
                 }
             }
         
@@ -399,7 +395,8 @@ public class Trainer
     }
     
     private static double plusOrMinus10(double output) {
-        return Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 10 * Math.random() + output;
+        double newVal = output + output * 0.1 * Math.pow(-1, (double)(rand.nextInt(2) + 1)); //Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 2 * output * Math.random() + output;
+        return newVal;
     }
     
     private static double[][][] swapTrainingAndTesting(double[][][] trainingAndTesting) {
@@ -551,7 +548,9 @@ public class Trainer
                                             
                                             // Print information about the next experiment
                                             System.out.println("Experiment " + experimentIndex);
+                                            System.out.println("# of training examples" + sizes[a]);
                                             System.out.println("Dataset size: " + dimensions[b]);
+                                            System.out.println("Repeats:" + repeats[c]);
                                             System.out.println("RBF basis function: " + rbfBasisFunction[d]);
                                             System.out.println("FF activation function: " + activationFunction[e]);
                                             System.out.println("Learning rate: " + learningRate[f]);
@@ -593,34 +592,34 @@ public class Trainer
                                             
                                             
                                             // Train and test a Feedforward neural net
-                                            results[1][experimentIndex] =  trainFF(
-                                                    sizes[a], 
-                                                    dimensions[b], 
-                                                    repeats[c], 
-                                                    rbfBasisFunction[d], 
-                                                    activationFunction[e], 
-                                                    learningRate[f], 
-                                                    clusters[g],
-                                                    momentum[h], 
-                                                    hiddenNum[i], 
-                                                    datasets);
-                                            
-                                            statistics = new double[5];
-                                            for (int j = 0; j < 5; j++) {
-                                                for (int k = 0; k < 10; k++) {
-                                                    statistics[k%5] += results[1][experimentIndex][j][k];
-                                                }
-                                            }
-                                            
-                                            statistics[4] /= 10;
-                                            
-                                            System.out.println("--------Feed Forward Neural Network--------");
-                                            System.out.println("  Correct above guesses: " + statistics[0]);
-                                            System.out.println("Incorrect above guesses: " + statistics[1]);
-                                            System.out.println("  Correct below guesses: " + statistics[2]);
-                                            System.out.println("Incorrect below guesses: " + statistics[3]);
-                                            System.out.println("       Average variance: " + statistics[4]);
-                                            System.out.println();
+//                                            results[1][experimentIndex] =  trainFF(
+//                                                    sizes[a],
+//                                                    dimensions[b],
+//                                                    repeats[c],
+//                                                    rbfBasisFunction[d],
+//                                                    activationFunction[e],
+//                                                    learningRate[f],
+//                                                    clusters[g],
+//                                                    momentum[h],
+//                                                    hiddenNum[i],
+//                                                    datasets);
+//
+//                                            statistics = new double[5];
+//                                            for (int j = 0; j < 5; j++) {
+//                                                for (int k = 0; k < 10; k++) {
+//                                                    statistics[k%5] += results[1][experimentIndex][j][k];
+//                                                }
+//                                            }
+//
+//                                            statistics[4] /= 10;
+//
+//                                            System.out.println("--------Feed Forward Neural Network--------");
+//                                            System.out.println("  Correct above guesses: " + statistics[0]);
+//                                            System.out.println("Incorrect above guesses: " + statistics[1]);
+//                                            System.out.println("  Correct below guesses: " + statistics[2]);
+//                                            System.out.println("Incorrect below guesses: " + statistics[3]);
+//                                            System.out.println("       Average variance: " + statistics[4]);
+//                                            System.out.println();
                                             
                                             experimentIndex++;
                                         }
