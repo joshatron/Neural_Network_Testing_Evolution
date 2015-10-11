@@ -8,6 +8,12 @@ import rbf.*;
 
 /**
  * Created by joshua on 9/22/15.
+ * 
+ * This will cause a merge conflict
+ *
+ *
+ *
+ *
  */
 
 public class Trainer
