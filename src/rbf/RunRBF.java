@@ -16,6 +16,9 @@ public class RunRBF
         return rbfNeuralNetwork;
     }
 
+    /**
+     * This method is used for debugging the rbf using all random data
+     */
     public static void main(String[] args)
     {
         double[] errors;
