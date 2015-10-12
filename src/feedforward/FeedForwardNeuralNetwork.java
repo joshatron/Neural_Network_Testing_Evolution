@@ -29,7 +29,7 @@ public class FeedForwardNeuralNetwork
     private int biggestSize;
     private ActivationFunction activationFunction;
     private double biasNum = 1.;
-    private double linearSlope = 1.;
+    private double linearSlope = .0001;
 
     //last deltas to be used for momentum
     private double[] lastDeltas;

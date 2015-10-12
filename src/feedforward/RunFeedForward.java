@@ -27,14 +27,15 @@ public class RunFeedForward
     {
         FeedForwardNeuralNetwork net = new FeedForwardNeuralNetwork(hiddenLayers, sizesLayers, activationFunction,
                                                                     momentum, learningRate);
-        try
+        /*try
         {
             net.export(new File("start.json"));
         } catch(IOException e)
         {
             e.printStackTrace();
-        }
+        }*/
         System.out.println("Running training");
+        long time = System.currentTimeMillis();
         /*System.out.println(hiddenLayers);
         System.out.println(sizesLayers[0]);*/
         //run through the data set however many times
@@ -75,13 +76,14 @@ public class RunFeedForward
             }
         }
 
-        try
+        /*try
         {
-            net.export(new File("end.json"));
+            net.export(new File("end" + examples.length + Math.random() + ".json"));
         } catch(IOException e)
         {
             e.printStackTrace();
-        }
+        }*/
+        System.out.println("Execution time: " + (System.currentTimeMillis() - time));
         return net;
     }
 }
