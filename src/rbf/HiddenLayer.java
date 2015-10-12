@@ -57,7 +57,8 @@ public class HiddenLayer
         {
             double distance = Math.abs(input[index] - this.exampleValues[index]);
             // ( || xi - xj || ) ^ -3
-            return Math.pow(distance * distance, -3);
+            //System.out.println(Math.pow((distance + 1), -3));
+            return Math.pow((distance + 1), -3);
         }
     }
 

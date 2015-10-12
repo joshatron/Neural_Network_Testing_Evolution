@@ -168,12 +168,15 @@ public class RBFNeuralNetwork
      */
     public void train(double[][] trainingSet)
     {
-        for (int i = 0; i < trainingSet.length; i++)
+        for (int j = 0; j < this.repeats; j++)
         {
-            double correctAnswer = this.findCorrectAnswer(trainingSet[i]);
-            double rbfAnswer = this.getResult(trainingSet[i]);
-            double error = correctAnswer - rbfAnswer;
-            this.backProp(trainingSet[i], error, rbfAnswer);
+            for (int i = 0; i < trainingSet.length; i++)
+            {
+                double correctAnswer = this.findCorrectAnswer(trainingSet[i]);
+                double rbfAnswer = this.getResult(trainingSet[i]);
+                double error = correctAnswer - rbfAnswer;
+                this.backProp(trainingSet[i], error, rbfAnswer);
+            }
         }
     }
 
