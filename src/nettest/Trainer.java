@@ -38,7 +38,7 @@ public class Trainer
      *  0.1, 0.05, 0.01*, 0.005, 0.001
      *
      *  Clusters {hidden num, number of clusters}:
-     *  {50,500}, {100,10000}*, {500,10000}
+     *  {500,50}, {10000,50}, {100000,50} {500,100}, {10000,100}*, {100000,100}, {500,500}, {10000,500}, {100000, 500}
      *
      *  momentums
      *  .1, .01*, .001
@@ -54,7 +54,7 @@ public class Trainer
         // Dataset sizes
         int[] sizes = new int[] 
         {
-                1000,
+                1000,50000,100000,500000,1000000,
         };
         
         // Numbers of inputs to the Rosenbrock function
@@ -90,7 +90,7 @@ public class Trainer
         // { Numbers of nodes in each hidden layer, number of clusters }
         int[][] clusters = new int[][]
         {
-            {10000,100}
+                {10000,100}
         };
         
         // Momentums for the Feed Forward neural net
@@ -350,17 +350,19 @@ public class Trainer
             double[][][] datasets = partitionData(dataset);
             double[][] buildingData;
 
-//            buildingData = new double[Math.min(clusters[1], datasets[0].length)][];
-//
-//            for (int j = 0; j < buildingData.length; j++)
-//            {
-//                buildingData[j] = datasets[0][j];
-//            }
+            int buildingSize = Math.min(clusters[0], datasets[0].length);
+            buildingData = new double[buildingSize][];
 
-            
-            RBFNeuralNetwork rbf = RunRBF.testRBF(datasets[0], datasets[0], learningRate, clusters[0], rbfBasisFunction, repeats[1]);
-            
-        
+            for (int j = 0; j < buildingSize; j++)
+            {
+                buildingData[j] = datasets[0][j];
+            }
+
+            long startTime = System.currentTimeMillis();
+            RBFNeuralNetwork rbf = RunRBF.testRBF(buildingData, datasets[0], learningRate, clusters[1], rbfBasisFunction, repeats[1]);
+            long end = System.currentTimeMillis();
+            System.out.println("Run time: " + (end - startTime));
+
             for(int j = 0; j < datasets[1].length; j++) {
                 int index = datasets[1][j].length - 1;
                 double actualValue = datasets[1][j][index];
@@ -459,7 +461,7 @@ public class Trainer
     }
     
     public static double plusOrMinus10(double output) {
-        double newVal = output + output * 0.1 * Math.pow(-1, (double)(rand.nextInt(2) + 1)); //Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 2 * output * Math.random() + output;
+        double newVal = output + output * 1 * Math.pow(-1, (double)(rand.nextInt(2) + 1)); //Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 2 * output * Math.random() + output;
         return newVal;
     }
     
@@ -664,17 +666,18 @@ public class Trainer
                                             standardDeviation = Math.sqrt(standardDeviation);
                                             
                                             System.out.println("------------RBF Neural Network------------");
-                                            System.out.println("  Correct above guesses: " + aboveRight);
-                                            System.out.println("Incorrect above guesses: " + aboveWrong);
-                                            System.out.println("  Correct below guesses: " + belowRight);
-                                            System.out.println("Incorrect below guesses: " + belowWrong);
-                                            System.out.println("     Average real value: " + averageReal);
-                                            System.out.println("Average predicted value: " + averagePrediction);
-                                            System.out.println("          Average error: " + averageError);
-                                            System.out.println("  Average percent error: " + percentError);
-                                            System.out.println("Standard dev. of errors: " + standardDeviation);
-                                            System.out.println("          Minimum error: " + minError);
-                                            System.out.println("          Maximum error: " + maxError);
+                                            System.out.println("    Correct above guesses: " + aboveRight);
+                                            System.out.println("  Incorrect above guesses: " + aboveWrong);
+                                            System.out.println("    Correct below guesses: " + belowRight);
+                                            System.out.println("  Incorrect below guesses: " + belowWrong);
+                                            System.out.println("       Average real value: " + averageReal);
+                                            System.out.println("  Average predicted value: " + averagePrediction);
+                                            System.out.println("            Average error: " + averageError);
+                                            System.out.println("    Average percent error: " + percentError);
+                                            System.out.println("  Standard dev. of errors: " + standardDeviation);
+                                            System.out.println("            Minimum error: " + minError);
+                                            System.out.println("            Maximum error: " + maxError);
+                                            System.out.println("Percent correctly guessed: " + ((aboveRight + belowRight) / (aboveRight + belowRight + aboveWrong + belowWrong) * 100));
                                             System.out.println();
                                             //swapTrainingAndTesting(datasets);
                                             

@@ -19,7 +19,12 @@ public class kMeansClustering
      */
     public double[][] createInitialCentroids(int numbOfCentroids)
     {
-        double[][] centroids = new double[numbOfCentroids][this.inputs[0].length];
+        if (this.inputs.length <= numbOfCentroids)
+        {
+            return this.inputs;
+        }
+
+        double[][] centroids = new double[numbOfCentroids][n];
 
         int[] assignedCentroids = new int[numbOfCentroids];
         int numbOfAssignedCentroids = 0;
@@ -85,9 +90,7 @@ public class kMeansClustering
 
             // calculate change in centroids
             diff = maxCentroidChange(centroids, newCentroids);
-            //System.out.println("Diff: " + diff);
             centroids = newCentroids;
-
         } while (diff > maxDiff);
 
         return centroids;
