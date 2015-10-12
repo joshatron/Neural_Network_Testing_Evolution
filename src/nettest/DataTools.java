@@ -12,17 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class DataTools {
+    
+    // Size of the input domain. Actual domain will be plus or minus 0.5 * domainSize.
     private static final float domainSize = 10.0f;
-
-//    public static void main(String[] args) {
-//        for (int i = 6; i < 7; i++) {
-//            for (int j = 100; j < 500000; j *= 10) {
-//                generateData(i,j);
-//                generateData(i,j*2+j/2);
-//                generateData(i, j*5);
-//            }
-//        }
-//    }
 
     /**
      * Create a JSON with a 2D array of doubles. All but the last double in each
@@ -31,6 +23,7 @@ public class DataTools {
      *
      * @param numInputs number of inputs for the Rosenbrock function
      * @param setSize   number of instances the output dataset will have
+     * @return 2D array of the specified dataset.
      */
     public static double[][] generateData(int numInputs, int setSize) {
         JSONObject dataset = new JSONObject();
@@ -53,6 +46,7 @@ public class DataTools {
             dataset.put(name, instance);
         }
 
+        // Relative path. Must create a directory "~/data/"  to save the JSON.
         try (PrintWriter writer = new PrintWriter(String.format("data/%dD_Data_%d_vectors.JSON", numInputs, setSize), "UTF-8")) {
             writer.write(dataset.toString());
             writer.close();
@@ -63,12 +57,14 @@ public class DataTools {
     }
 
     /**
-     * Get a dataset from a JSON created by the generateData() method.
+     * Get a dataset from a JSON created by the generateData() method. If the
+     * specified data set has not been created, generate one.
      * @param numInputs number of inputs used by the dataset
      * @param setSize   number of instances
      * @return          2D array data[i][j], where i = [0,setSize] and j = [0,numInputs]
      */
     public static double[][] getDataFromFile(int numInputs, int setSize) {
+        // Relative path. Must create a directory "~/data/"  
         File file = new File(String.format("data/%dD_Data_%d_vectors.JSON", numInputs, setSize));
         double[][] data;
 

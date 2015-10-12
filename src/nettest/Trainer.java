@@ -105,26 +105,33 @@ public class Trainer
             1
         };
         
-        runExperiment(sizes,dimensions,repeats,rbfBasisFunction,activationFunction,learningRate,clusters,momentum,hiddenNum);
+        System.out.println("Would you like to specify parameters? (y/n)");
+        Scanner in = new Scanner(System.in);
+        String input = in.nextLine().toLowerCase();
+        if (input.charAt(0) == 'y') {
+            setExperiment();
+        } else {
+            runExperiment(sizes,dimensions,repeats,rbfBasisFunction,activationFunction,learningRate,clusters,momentum,hiddenNum);
+        }
     }
     
-    public static void setFeedforward() {
+    /**
+     * Enable the user to input the parameters of one experiment.
+     */
+    public static void setExperiment() {
         Scanner in = new Scanner(System.in);
         System.out.println("-----Set the parameters for the feed forward neural net-----");
-        System.out.print("Training set size: ");
-        int trainingSetSize = in.nextInt();
-        System.out.println();
-        System.out.print("Building set size: ");
-        int hiddenLayers = in.nextInt();
+        System.out.print("Data set size: ");
+        int size = in.nextInt();
         System.out.println();
         System.out.print("Number of inputs: ");
         int[] sizesLayers = new int[3];
         sizesLayers[0] = in.nextInt();
         System.out.println();
-        System.out.print("Number of examples: ");
+        System.out.print("Number of Hidden Layers: ");
         sizesLayers[1] = in.nextInt();
         System.out.println();
-        System.out.print("Number of outputs: ");
+        System.out.print("Size of Hidden Layers: ");
         sizesLayers[2] = in.nextInt();
         System.out.println();
         System.out.print("Learning rate: ");
@@ -144,36 +151,37 @@ public class Trainer
             activationFunction = ActivationFunction.LINEAR;
             selection = "Linear";
         }
-        
-        System.out.format("Hidden layers: %d, Inputs: %d, Examples: %d, Outputs: %d,%nLearning rate: %f, Momentum: %f, Activation function: %s%n",
-                hiddenLayers, sizesLayers[0], sizesLayers[1], sizesLayers[2], learningRate, momentum, selection);
-        
-    }
-    
-    public static void setRBF() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("-----Set the parameters for the RBF neural net-----");
-        System.out.print("Training set size: ");
-        int trainingSetSize = in.nextInt();
-        System.out.println();
-        System.out.print("Building set size: ");
-        int buildingSetSize = in.nextInt();
-        System.out.println();
-        System.out.print("Number of inputs: ");
-        int numInputs = in.nextInt();
-        System.out.println();
         System.out.print("Number of clusters: ");
         int numbOfClusters = in.nextInt();
         System.out.println();
-        System.out.print("Learning rate: ");
-        double learningRate = in.nextDouble();
+        System.out.print("RBF basis function (0 = Gaussian, 1 = cubed, 2 = multi-quad): ");
+        int rbfBasisFunction = in.nextInt();
         System.out.println();
         
-        System.out.format("Training set size: %d, Building set size: %d, Inputs: %d, Number of clusters: %d, Learning rate: %f%n",
-                trainingSetSize, buildingSetSize, numInputs, numbOfClusters, learningRate);
-        
+        runExperiment(new int[]{size},
+                      new int[]{sizesLayers[0]},
+                      new int[][]{{1,1}},
+                      new int[]{rbfBasisFunction},
+                      new ActivationFunction[]{activationFunction},
+                      new double[]{learningRate},
+                      new int[][]{{sizesLayers[2],numbOfClusters}},
+                      new double[]{momentum},new int[]{sizesLayers[1]});
     }
     
+    /**
+     * Test a Feedforward neural net using 5x2-fold cross validation.
+     * @param size
+     * @param dimensions
+     * @param repeats
+     * @param rbfBasisFunction
+     * @param activationFunction
+     * @param learningRate
+     * @param clusters
+     * @param momentums
+     * @param hidden
+     * @param dataset
+     * @return 2D array of results
+     */
     public static double[][] trainFF(
                 int size, 
                 int dimensions, 
@@ -195,12 +203,12 @@ public class Trainer
         sizesArray[sizesArray.length-1] = 2;
         
         // Initialize the storage for the output of this test.
-        double[][] output = new double[7][10];
-        double[] confidences = new double[size*10];
-        double confidenceAR = 0.0;
-        double confidenceAW = 0.0;
-        double confidenceBR = 0.0;
-        double confidenceBW = 0.0;
+        double[][] output = new double[7][10];  // Bundle of statistics
+        double[] confidences = new double[size*10]; // Store all confidence values
+        double confidenceAR = 0.0;  // Sum of confidences above when guessed right
+        double confidenceAW = 0.0;  // Sum of confidences above when guessed wrong
+        double confidenceBR = 0.0;  // Sum of confidences below when guessed wrong
+        double confidenceBW = 0.0;  // Sum of confidences below when guessed right
         System.out.println("Feed Forward Neural Network:");
         // For 5 repetitions of 2-fold cross validation
         for (int i = 0; i < 5; i++) {
@@ -218,13 +226,17 @@ public class Trainer
             double belowWrong = 0.0;
             
             for(int j = 0; j < datasets[1].length; j++) {
+                // Index of the output of the Rosenbrock function
                 int index = datasets[1][j].length - 1;
+                // Actual output of the Rosenbrock function
                 double actualValue = datasets[1][j][index];
+                // Value plus or minus a constant percent of the actual value
                 double offsetValue = plusOrMinus10(actualValue);
+                
+                // Compute the confidences that the offset value is above or below the function
                 datasets[1][j][index] = offsetValue;
                 double[] prediction = ff.compute(datasets[1][j]);
                 datasets[1][j][index] = actualValue;
-                //System.out.println("confidence correct: " + prediction[1] + "\nconfidence incorrect: " + prediction[0]);
 
                 boolean abovePredicted =  prediction[1] < prediction[0];
                 boolean aboveActual = actualValue < offsetValue;
@@ -269,16 +281,25 @@ public class Trainer
             belowWrong = 0.0;
             
             for(int j = 0; j < datasets[0].length; j++) {
+                // Index of the output of the Rosenbrock function
                 int index = datasets[0][j].length - 1;
+                // Actual output of the Rosenbrock function
                 double actualValue = datasets[0][j][index];
+                // Value plus or minus a constant percent of the actual value
                 double offsetValue = plusOrMinus10(actualValue);
+                
+                // Compute the confidences that the offset value is above or below the function
                 datasets[0][j][index] = offsetValue;
                 double[] prediction = ff.compute(datasets[0][j]);
                 datasets[0][j][index] = actualValue;
                 
+                // True iff the prediction is above the function
                 boolean abovePredicted =  prediction[1] < prediction[0];
+                
+                // True iff the offset value is above the function 
                 boolean aboveActual = actualValue < offsetValue;
-                double confidence;
+                
+                double confidence;  // This will be the selected confidence
                 if (abovePredicted && aboveActual) {
                     confidence = prediction[0];
                     confidenceAR += confidence;
@@ -297,23 +318,41 @@ public class Trainer
                     belowRight += 1.0;
                 }
                 
+                // Store confidence data
                 confidences[size*i+j*2+1] = confidence;
                 confidenceSum += confidence;
             }
         
             confidenceSum /= datasets[0].length;
             
+            // Store data from every train/test separately
             output[i][5] = aboveRight;
             output[i][6] = aboveWrong;
             output[i][7] = belowRight;
             output[i][8] = belowWrong;
             output[i][9] = confidenceSum;
         }
+        
+        // Store all confidence values
         output[5] = confidences;
         output[6] = new double[]{confidenceAR,confidenceAW,confidenceBW,confidenceBR};
         return output;
     }
     
+    /**
+     * Train and test the RBF net using 5x2-fold cross validation.
+     * @param size
+     * @param dimensions
+     * @param repeats
+     * @param rbfBasisFunction
+     * @param activationFunction
+     * @param learningRate
+     * @param clusters
+     * @param momentums
+     * @param hidden
+     * @param dataset
+     * @return 2D array of results
+     */
     public static double[][] trainRBF(
                 int size, 
                 int dimensions, 
@@ -332,17 +371,18 @@ public class Trainer
         double[] allValues = new double[size*10];
         double[] allGuesses = new double[size*10];
         
-        double aboveRight = 0.0;
-        double aboveWrong = 0.0;
-        double belowRight = 0.0;
-        double belowWrong = 0.0;
-        double varianceSum = 0.0;
-        double realValue = 0.0;
-        double estimatedValue = 0.0;
-        double minError = 99999999.0;
-        double maxError = 0.0;
-        double percentError = 0.0;
+        double aboveRight = 0.0;    // Total above and correct guesses
+        double aboveWrong = 0.0;    // Total above and incorrect guesses
+        double belowRight = 0.0;    // Total below and incorrect guesses
+        double belowWrong = 0.0;    // Total below and correct guesses
+        double varianceSum = 0.0;   // Sum of the error
+        double realValue = 0.0;     // sum of the actual values
+        double estimatedValue = 0.0;    // Sum of the approximated values
+        double minError = 99999999.0;   // minimum error
+        double maxError = 0.0;          // maximum error
+        double percentError = 0.0;      // sum of the percent errors
         System.out.println("RBF Neural Network:");
+        // For 5 repetitions of 2-fold cross validation
         for (int i = 0; i < 5; i++) {
             System.out.println("Running cross-validation, on part: " + i);
             int count = i + 1;
@@ -358,24 +398,33 @@ public class Trainer
                 buildingData[j] = datasets[0][j];
             }
 
+            // First: train on datasets[0], test on datasets[1]
             long startTime = System.currentTimeMillis();
             RBFNeuralNetwork rbf = RunRBF.testRBF(buildingData, datasets[0], learningRate, clusters[1], rbfBasisFunction, repeats[1]);
             long end = System.currentTimeMillis();
             System.out.println("Run time: " + (end - startTime));
 
             for(int j = 0; j < datasets[1].length; j++) {
+                // Index of the output of the Rosenbrock function
                 int index = datasets[1][j].length - 1;
+                // Actual output of the Rosenbrock function
                 double actualValue = datasets[1][j][index];
                 realValue += actualValue;
+                // Value plus or minus a constant percent of the actual value
                 double offsetValue = plusOrMinus10(actualValue);
+                // Approximated value
                 double predictedValue = rbf.getResult(datasets[1][j]);
                 estimatedValue += predictedValue;
                 
+                // Variance
                 double variance = Math.abs(predictedValue - actualValue);
+                
+                // Store statistics aquired thus far
                 errors[size*i+j*2] = variance;
                 allValues[size*i+j*2] = realValue;
                 allGuesses[size*i+j*2] = predictedValue;
                 
+                // Calculate percent error
                 percentError += 100* ((predictedValue - actualValue) / actualValue);
                 
                 varianceSum += variance;
@@ -387,6 +436,7 @@ public class Trainer
                     maxError = variance;
                 }
                 
+                // Predict above or below the function
                 boolean abovePredicted = rbf.aboveValue(datasets[1][j], offsetValue);
 
                 boolean aboveActual = actualValue < offsetValue;
@@ -402,18 +452,24 @@ public class Trainer
                 }
             }
             
+            // Cross validation, swap testing and training sets
             rbf = RunRBF.testRBF(datasets[1], datasets[1], learningRate, clusters[1], rbfBasisFunction, repeats[1]);
         
             for(int j = 0; j < datasets[0].length; j++) {
+                // Index of the output of the Rosenbrock function
                 int index = datasets[0][j].length - 1;
+                // Actual output of the Rosenbrock function
                 double actualValue = datasets[0][j][index];
                 realValue += actualValue;
+                // Value plus or minus a constant percent of the actual value
                 double offsetValue = plusOrMinus10(actualValue);
+                // Approximated value
                 double predictedValue = rbf.getResult(datasets[0][j]);
                 estimatedValue += predictedValue;
                 
                 
                 double variance = Math.abs(predictedValue - actualValue);
+                // Store statistics aquired thus far
                 errors[size*i+j*2+1] = variance;
                 allValues[size*i+j*2+1] = realValue;
                 allGuesses[size*i+j*2+1] = predictedValue;
@@ -428,6 +484,7 @@ public class Trainer
                     maxError = variance;
                 }
                 
+                // Predict above or below the function
                 boolean abovePredicted = rbf.aboveValue(datasets[0][j], offsetValue);
 
                 boolean aboveActual = actualValue < offsetValue;
@@ -444,6 +501,7 @@ public class Trainer
             }
         }
         
+        // Store all data in the output array
         output[0][0] = aboveRight;
         output[0][1] = aboveWrong;
         output[0][2] = belowRight;
@@ -457,14 +515,25 @@ public class Trainer
         output[1] = errors;
         output[2] = allValues;
         output[3] = allGuesses;
+        
         return output;
     }
     
+    /**
+     * Randomly add to or subtract from the input a fixed percentage of the input
+     * @param output output of the Rosenbrock function
+     * @return output plus or minus a fixed percentage.
+     */
     public static double plusOrMinus10(double output) {
         double newVal = output + output * 1 * Math.pow(-1, (double)(rand.nextInt(2) + 1)); //Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 2 * output * Math.random() + output;
         return newVal;
     }
     
+    /**
+     * Swap training and testing sets
+     * @param trainingAndTesting
+     * @return same data, but first index is swapped
+     */
     private static double[][][] swapTrainingAndTesting(double[][][] trainingAndTesting) {
         for (int i = 0; i < trainingAndTesting[0].length; i++) {
             int lastIndex = trainingAndTesting[0][i].length - 1;
@@ -482,11 +551,18 @@ public class Trainer
         return trainingAndTesting;
     }
     
+    /**
+     * Randomly partition the dataset into two equal subsets, one training and
+     * one testing
+     * @param dataset data to be partitioned
+     * @return two random halves of the data set
+     */
     private static double[][][] partitionData(double[][] dataset) {
         
         int numInputs = dataset[0].length;
         int size = dataset.length;
         
+        // Two halves of the dataset
         double[][] trainingData = new double[size/2][numInputs];
         double[][] testingData = new double[size/2][numInputs];
         
@@ -496,44 +572,41 @@ public class Trainer
         int half = size/2;
         
         while(trainingIndex < half && testingIndex < half) {
+            // Flip a coin...
             if (rand.nextBoolean()) {
+                // If heads, add the next instance of the dataset to the training set
                 for (int i = 0; i < numInputs; i++) {
                     trainingData[trainingIndex][i] = dataset[dataIndex][i];
                 }
                 
-                //trainingData[trainingIndex][numInputs] = plusOrMinus10(trainingData[trainingIndex][numInputs - 1]);
-                
                 trainingIndex++;
                 dataIndex++;
             } else {
+                // If tails, add the next instance of the dataset to the testing set
                 for (int i = 0; i < numInputs; i++) {
                     testingData[testingIndex][i] = dataset[dataIndex][i];
                 }
-                
-                //testingData[testingIndex][numInputs] = plusOrMinus10(testingData[testingIndex][numInputs - 1]);
                 
                 testingIndex++;
                 dataIndex++;
             }
         }
         
+        // If the training index is still not full, give it the remaining data
         while(trainingIndex < half) {
             for (int i = 0; i < numInputs; i++) {
                 trainingData[trainingIndex][i] = dataset[dataIndex][i];
             }
                 
-            //trainingData[trainingIndex][numInputs] = plusOrMinus10(trainingData[trainingIndex][numInputs - 1]);
-                
             trainingIndex++;
             dataIndex++;
         }
         
+        // If the testing index is still not full, give it the remaining data
         while(testingIndex < half) {
             for (int i = 0; i < numInputs; i++) {
                 testingData[testingIndex][i] = dataset[dataIndex][i];
             }
-            
-            //testingData[testingIndex][numInputs] = plusOrMinus10(testingData[testingIndex][numInputs - 1]);
             
             testingIndex++;
             dataIndex++;
@@ -542,6 +615,18 @@ public class Trainer
         return new double[][][] { trainingData, testingData };
     }
     
+    /**
+     * Run an experiment, iterating through all possible combinations of parameters.
+     * @param sizes
+     * @param dimensions
+     * @param repeats
+     * @param rbfBasisFunction
+     * @param activationFunction
+     * @param learningRate
+     * @param clusters {number of hidden nodes in each layer, number of clusters}
+     * @param momentum
+     * @param hiddenNum number of hidden layers
+     */
     public static void runExperiment(
             int[] sizes, 
             int[] dimensions, 
@@ -679,52 +764,51 @@ public class Trainer
                                             System.out.println("            Maximum error: " + maxError);
                                             System.out.println("Percent correctly guessed: " + ((aboveRight + belowRight) / (aboveRight + belowRight + aboveWrong + belowWrong) * 100));
                                             System.out.println();
-                                            //swapTrainingAndTesting(datasets);
                                             
                                             
                                             // Train and test a Feedforward neural net
-//                                            results[1][experimentIndex] =  trainFF(
-//                                                    sizes[a],
-//                                                    dimensions[b],
-//                                                    repeats[c],
-//                                                    rbfBasisFunction[d],
-//                                                    activationFunction[e],
-//                                                    learningRate[f],
-//                                                    clusters[g],
-//                                                    momentum[h],
-//                                                    hiddenNum[i],
-//                                                    datasets);
-//
-//                                            double[] statistics = new double[5];
-//                                            for (int j = 0; j < 5; j++) {
-//                                                for (int k = 0; k < 10; k++) {
-//                                                    statistics[k%5] += results[1][experimentIndex][j][k];
-//                                                }
-//                                            }
-//
-//                                            statistics[4] /= 10;
-//
-//                                            double[] confidences = results[1][experimentIndex][6];
-//
-//                                            confidences[0] /= statistics[0];
-//                                            confidences[1] /= statistics[1];
-//                                            confidences[2] /= statistics[2];
-//                                            confidences[3] /= statistics[3];
-//
-//
-//                                            System.out.println("--------Feed Forward Neural Network--------");
-//                                            System.out.println("  Correct above guesses: " + statistics[0]);
-//                                            System.out.println("Incorrect above guesses: " + statistics[1]);
-//                                            System.out.println("  Correct below guesses: " + statistics[2]);
-//                                            System.out.println("Incorrect below guesses: " + statistics[3]);
-//                                            System.out.println("     Average confidence: " + statistics[4]);
-//                                            System.out.println("Average confidence when...");
-//                                            System.out.println("      Correct and above: " + confidences[0]);
-//                                            System.out.println("    Incorrect and above: " + confidences[1]);
-//                                            System.out.println("      Correct and below: " + confidences[2]);
-//                                            System.out.println("    Incorrect and below: " + confidences[3]);
-//                                            System.out.println();
-//
+                                            results[1][experimentIndex] =  trainFF(
+                                                    sizes[a],
+                                                    dimensions[b],
+                                                    repeats[c],
+                                                    rbfBasisFunction[d],
+                                                    activationFunction[e],
+                                                    learningRate[f],
+                                                    clusters[g],
+                                                    momentum[h],
+                                                    hiddenNum[i],
+                                                    datasets);
+
+                                            double[] statistics = new double[5];
+                                            for (int j = 0; j < 5; j++) {
+                                                for (int k = 0; k < 10; k++) {
+                                                    statistics[k%5] += results[1][experimentIndex][j][k];
+                                                }
+                                            }
+
+                                            statistics[4] /= 10;
+
+                                            double[] confidences = results[1][experimentIndex][6];
+
+                                            confidences[0] /= statistics[0];
+                                            confidences[1] /= statistics[1];
+                                            confidences[2] /= statistics[2];
+                                            confidences[3] /= statistics[3];
+
+
+                                            System.out.println("--------Feed Forward Neural Network--------");
+                                            System.out.println("  Correct above guesses: " + statistics[0]);
+                                            System.out.println("Incorrect above guesses: " + statistics[1]);
+                                            System.out.println("  Correct below guesses: " + statistics[2]);
+                                            System.out.println("Incorrect below guesses: " + statistics[3]);
+                                            System.out.println("     Average confidence: " + statistics[4]);
+                                            System.out.println("Average confidence when...");
+                                            System.out.println("      Correct and above: " + confidences[0]);
+                                            System.out.println("    Incorrect and above: " + confidences[1]);
+                                            System.out.println("      Correct and below: " + confidences[2]);
+                                            System.out.println("    Incorrect and below: " + confidences[3]);
+                                            System.out.println();
+                                            
                                             experimentIndex++;
                                         }
                                     }
