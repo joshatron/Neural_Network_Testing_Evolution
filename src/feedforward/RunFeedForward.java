@@ -1,6 +1,6 @@
 package feedforward;
 
-import nettest.Trainer;
+import nettest.DataTools;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class RunFeedForward
                     input[a] = examples[k][a];
                 }
 
-                double tempOut = Trainer.plusOrMinus10(examples[k][input.length - 1]);
+                double tempOut = DataTools.plusOrMinus10(examples[k][input.length - 1]);
                 input[input.length - 1] = tempOut;
                 if(tempOut > examples[k][input.length - 1])
                 {
