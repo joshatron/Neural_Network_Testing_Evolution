@@ -4,6 +4,7 @@ import feedforward.FeedForwardNeuralNetwork;
 
 /**
  * Created by joshua on 10/14/15.
+ * This class teaches a given neural network with the backpropagation algorithm.
  */
 public class Backpropagation implements Trainer
 {
@@ -11,6 +12,16 @@ public class Backpropagation implements Trainer
     private double momentum;
     private double[] lastDeltas;
 
+    /**
+     * This is the main runner for the algorithm, it loops through the examples,
+     * training the network on each example
+     * @param net the starting network
+     * @param examples a 2-d array of examples. each example has a list of inputs and
+     *                 expected outputs.
+     * @param parameters an array where the first number is the learning rate and the
+     *                   second is the momentum
+     * @return returns a network that is the result of running backpropagation on the examples
+     */
     @Override
     public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples, double[] parameters)
     {
@@ -20,11 +31,13 @@ public class Backpropagation implements Trainer
 
         int[] sizes = net.getSizes();
 
+        //for each example
         for(int k = 0; k < examples.length; k++)
         {
             double[] input = new double[sizes[0]];
             double[] output = new double[sizes[sizes.length - 1]];
 
+            //separate input and output
             int t = 0;
             for(int a = 0; a < examples[0].length; a++)
             {
@@ -39,6 +52,7 @@ public class Backpropagation implements Trainer
                 }
             }
 
+            //run backprop on it
             backprop(input, output, net);
         }
 
@@ -46,12 +60,14 @@ public class Backpropagation implements Trainer
     }
 
     /**
-     * Given an example with the inputs and expected outputs, trains the net
+     * Given an example with the inputs and expected outputs, trains the network
      * @param inputs the inputs for the example
      * @param expectedOutputs what the outputs should be
+     * @param net the network to train
      */
     public void backprop(double[] inputs, double[] expectedOutputs, FeedForwardNeuralNetwork net)
     {
+        //create variables that will be used later
         int[] sizes = net.getSizes();
         int biggestSize = 0;
         for(int k = 0; k < sizes.length; k++)

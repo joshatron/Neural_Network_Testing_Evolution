@@ -120,8 +120,6 @@ public class FeedForwardNeuralNetwork
      * @param hiddenLayers Number of hidden layers
      * @param sizes Size of each layer, starting with the input and ending with the output
      * @param activationFunction Activation function to use
-     * @param momentum Momentum for learning
-     * @param learningRate Learning rate
      */
     public FeedForwardNeuralNetwork(int hiddenLayers, int[] sizes, ActivationFunction activationFunction)
     {
