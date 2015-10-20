@@ -5,7 +5,7 @@ import feedforward.FeedForwardNeuralNetwork;
 /**
  * Created by joshua on 10/14/15.
  */
-public class BackpropagationTrainer implements Trainer
+public class Backpropagation implements Trainer
 {
     private double learningRate;
     private double momentum;

@@ -32,7 +32,7 @@ public class Experimenter {
         trainers[0] = new DifferentialEvolution();
         trainers[1] = new MewLambdaEvolution();
         trainers[2] = new DifferentialEvolution();
-        trainers[3] = new BackpropagationTrainer();
+        trainers[3] = new Backpropagation();
     }
     
     /**
