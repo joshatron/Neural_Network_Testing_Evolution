@@ -21,8 +21,6 @@ import java.util.Random;
 public class FeedForwardNeuralNetwork
 {
     //properties of the net
-    private double momentum;
-    private double learningRate;
     private double[] weights;
     private int hiddenLayers;
     private int[] sizes;
@@ -50,8 +48,6 @@ public class FeedForwardNeuralNetwork
      */
     public FeedForwardNeuralNetwork(JSONObject net)
     {
-        momentum = net.getDouble("momentum");
-        learningRate = net.getDouble("learningRate");
         hiddenLayers = net.getInt("hiddenLayers");
 
         String activation = net.getString("activationFunction");
@@ -127,13 +123,11 @@ public class FeedForwardNeuralNetwork
      * @param momentum Momentum for learning
      * @param learningRate Learning rate
      */
-    public FeedForwardNeuralNetwork(int hiddenLayers, int[] sizes, ActivationFunction activationFunction, double momentum, double learningRate)
+    public FeedForwardNeuralNetwork(int hiddenLayers, int[] sizes, ActivationFunction activationFunction)
     {
         this.hiddenLayers = hiddenLayers;
         this.sizes = sizes;
         this.activationFunction = activationFunction;
-        this.momentum = momentum;
-        this.learningRate = learningRate;
 
         biggestSize = 0;
         for(int k = 0; k < sizes.length; k++)
@@ -192,8 +186,6 @@ public class FeedForwardNeuralNetwork
     public JSONObject export()
     {
         JSONObject net = new JSONObject();
-        net.put("momentum", momentum);
-        net.put("learningRate", learningRate);
         net.put("hiddenLayers", hiddenLayers);
         net.put("activationFunction", activationFunction.name());
         net.put("sizes", new JSONArray(sizes));
@@ -223,7 +215,6 @@ public class FeedForwardNeuralNetwork
      */
     public double[] compute(double[] inputs)
     {
-        inputs[inputs.length - 1] = inputs[inputs.length - 1] / 10000;
         //if input wrong size, return
         if(inputs.length != sizes[0])
         {
@@ -267,107 +258,6 @@ public class FeedForwardNeuralNetwork
     }
 
     /**
-     * Given an example with the inputs and expected outputs, trains the net
-     * @param inputs the inputs for the example
-     * @param expectedOutputs what the outputs should be
-     */
-    public void backprop(double[] inputs, double[] expectedOutputs)
-    {
-        inputs[inputs.length - 1] = inputs[inputs.length - 1] / 10000;
-        /*for(int k = 0; k < weights.length; k++)
-        {
-            System.out.print(weights[k] + ", ");
-        }
-        System.out.println();*/
-        //if input or output wrong size, return
-        if(inputs.length != sizes[0])
-        {
-            System.out.println("Invalid number of inputs");
-            return;
-        }
-
-        if(expectedOutputs.length != sizes[sizes.length - 1])
-        {
-            System.out.println("Invalid number of outputs");
-            return;
-        }
-
-        double[][] allOutputs = new double[sizes.length][biggestSize];
-        double[][] allErrors = new double[sizes.length][biggestSize];
-
-        //fill out first layer to temp output
-        int lastLayer = sizes[0];
-        for(int k = 0; k < lastLayer; k++)
-        {
-            allOutputs[0][k] = inputs[k];
-        }
-
-        //System.out.println("outputs");
-        //for each layer after the input
-        for(int k = 1; k < hiddenLayers + 2; k++)
-        {
-            //for each node in that layer
-            for(int a = 0; a < sizes[k]; a++)
-            {
-                //get sum and get activation function result and its derivative
-                double sum = 0;
-                for(int t = 0; t < lastLayer; t++)
-                {
-                    sum += allOutputs[k - 1][t] * getWeight(k - 1, t, k, a);
-                    //System.out.println(allOutputs[k - 1][t] + " * " + getWeight(k - 1, t, k, a));
-                }
-                sum += biasNum * getWeight(-1, 0, k, a);
-                allOutputs[k][a] = applyActivationFunction(sum);
-                allErrors[k][a] = applyActivationFunctionDerivative(sum);
-                //System.out.print("sum: " + sum + "(" + allOutputs[k][a] + "), ");
-            }
-            //System.out.println();
-            lastLayer = sizes[k];
-        }
-
-        //go backward from output to first hidden layer
-        for(int k = hiddenLayers + 1; k > 0; k--)
-        {
-            //for each node in that layer
-            for(int a = 0; a < sizes[k]; a++)
-            {
-                //compute error for not output layer
-                if(k != hiddenLayers + 1)
-                {
-                    double temp = allErrors[k][a];
-                    allErrors[k][a] = 0;
-                    for(int t = 0; t < sizes[k + 1]; t++)
-                    {
-                        allErrors[k][a] += getWeight(k, t, k + 1, a) * allErrors[k + 1][t];
-                    }
-                    allErrors[k][a] *= temp;
-                }
-                //compute error for output layer
-                else
-                {
-                    allErrors[k][a] *= (expectedOutputs[a] - allOutputs[k][a]);
-                    /*System.out.println("expected: " + expectedOutputs[a]);
-                    System.out.println("all: " + allOutputs[k][a]);
-                    System.out.println("error" + allErrors[k][a]);*/
-                }
-
-                //for each weight node takes as input
-                for(int t = 0; t < sizes[k - 1]; t++)
-                {
-                    //find the delta for the weight and apply
-                    int index = getIndex(k - 1, t, k, a);
-                    double delta = learningRate * allOutputs[k - 1][t] * allErrors[k][a]
-                                   + momentum * lastDeltas[index];
-
-                    setWeight(k - 1, t, k, a, getWeight(k - 1, t, k, a) + delta);
-                    lastDeltas[index] = delta;
-                }
-            }
-        }
-
-    }
-
-    /**
      * Gets weight between 2 nodes
      * @param layerStart Starting layer, -1 for bias node
      * @param start Node number in the starting layer
@@ -375,7 +265,7 @@ public class FeedForwardNeuralNetwork
      * @param end Node number in the ending layer
      * @return The value of the weight
      */
-    private double getWeight(int layerStart, int start, int layerEnd, int end)
+    public double getWeight(int layerStart, int start, int layerEnd, int end)
     {
         int index = getIndex(layerStart, start, layerEnd, end);
         return weights[index];
@@ -389,7 +279,7 @@ public class FeedForwardNeuralNetwork
      * @param end Node number in the ending layer
      * @param newWeight New weight between the nodes
      */
-    private void setWeight(int layerStart, int start, int layerEnd, int end, double newWeight)
+    public void setWeight(int layerStart, int start, int layerEnd, int end, double newWeight)
     {
         int index = getIndex(layerStart, start, layerEnd, end);
         weights[index] = newWeight;
@@ -403,7 +293,7 @@ public class FeedForwardNeuralNetwork
      * @param end Node number in the ending layer
      * @return The index where the weight is
      */
-    private int getIndex(int layerStart, int start, int layerEnd, int end)
+    public int getIndex(int layerStart, int start, int layerEnd, int end)
     {
         if(layerStart != -1)
         {
@@ -442,7 +332,7 @@ public class FeedForwardNeuralNetwork
      * @param sum The value to plug into the function
      * @return The value returned by applying the function to the value
      */
-    private double applyActivationFunction(double sum)
+    public double applyActivationFunction(double sum)
     {
         switch(activationFunction)
         {
@@ -461,7 +351,7 @@ public class FeedForwardNeuralNetwork
      * @param sum the value to plug into the function
      * @return The value returned by applying the function to the value
      */
-    private double applyActivationFunctionDerivative(double sum)
+    public double applyActivationFunctionDerivative(double sum)
     {
         switch(activationFunction)
         {
@@ -473,5 +363,25 @@ public class FeedForwardNeuralNetwork
 
         System.out.println("Failed to apply activation function");
         return -9999;
+    }
+
+    public double[] getWeights()
+    {
+        return weights;
+    }
+
+    public int[] getSizes()
+    {
+        return sizes;
+    }
+
+    public double getBiasNum()
+    {
+        return biasNum;
+    }
+
+    public void setWeights(double[] weights)
+    {
+        this.weights = weights;
     }
 }
