@@ -5,17 +5,33 @@ import training.*;
 import org.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 
-/**
- *
- * @author davej
- */
-public class Main {
+public class Main
+{
+    /**
+     * [0] => # of children
+     * [1] => # of generations
+     * [2] => mutation rate
+     * [3] => cross over rate
+     * [4] => populationSize
+     * [5] => # of weights
+     * [6] => crossover Type
+     */
+    double[][] GAParams = {
+            {50},
+            {100},
+            {0.01},
+            {0.1},
+            {50},
+            {5},
+            {0}
+    };
 
     /**
      * 
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         
         // Load all of the datasets and put them into one 3D double array
         double[][] dataset1 = new double[][]{{1.0}};

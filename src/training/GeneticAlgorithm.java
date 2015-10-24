@@ -248,7 +248,7 @@ public class GeneticAlgorithm implements Trainer
         return net;
     }
 
-//    
+//
 //    public static void main(String[] args)
 //    {
 //        GeneticAlgorithm ga = new GeneticAlgorithm();
