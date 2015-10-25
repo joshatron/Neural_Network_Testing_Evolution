@@ -6,14 +6,17 @@ import feedforward.FeedForwardNeuralNetwork;
  *
  * @author davej
  */
-public class DifferentialEvolution implements Trainer  {
+public class DifferentialEvolution implements Trainer
+{
 
-    public DifferentialEvolution() {
-        
+    double[] parameters;
+    public DifferentialEvolution(double[] parameters)
+    {
+        this.parameters = parameters;
     }
     
     @Override
-    public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples, double[] parameters) {
+    public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -2,18 +2,17 @@ package training;
 
 import feedforward.FeedForwardNeuralNetwork;
 
-/**
- *
- * @author davej
- */
-public class MewLambdaEvolution implements Trainer {
-    
-    public MewLambdaEvolution() {
-        
+public class MewLambdaEvolution implements Trainer
+{
+    double[] parameters;
+    public MewLambdaEvolution(double[] parameters)
+    {
+        this.parameters = parameters;
     }
 
     @Override
-    public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples, double[] parameters) {
+    public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples)
+    {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

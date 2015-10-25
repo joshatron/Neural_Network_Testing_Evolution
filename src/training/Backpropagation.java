@@ -11,6 +11,12 @@ public class Backpropagation implements Trainer
     private double learningRate;
     private double momentum;
     private double[] lastDeltas;
+    private double[] parameters;
+
+    public Backpropagation(double[] parameters)
+    {
+        this.parameters = parameters;
+    }
 
     /**
      * This is the main runner for the algorithm, it loops through the examples,
@@ -18,12 +24,10 @@ public class Backpropagation implements Trainer
      * @param net the starting network
      * @param examples a 2-d array of examples. each example has a list of inputs and
      *                 expected outputs.
-     * @param parameters an array where the first number is the learning rate and the
-     *                   second is the momentum
      * @return returns a network that is the result of running backpropagation on the examples
      */
     @Override
-    public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples, double[] parameters)
+    public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples)
     {
         lastDeltas = new double[net.getWeights().length];
         learningRate = parameters[0];

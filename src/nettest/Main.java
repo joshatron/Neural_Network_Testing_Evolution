@@ -16,14 +16,14 @@ public class Main
      * [5] => # of weights
      * [6] => crossover Type
      */
-    double[][] GAParams = {
-            {50},
-            {100},
-            {0.01},
-            {0.1},
-            {50},
-            {5},
-            {0}
+    public static double[] GAParams = {
+            50,
+            100,
+            0.01,
+            0.1,
+            50,
+            5,
+            0
     };
 
     /**
@@ -49,10 +49,10 @@ public class Main
         }
         
         // Initialize Trainer(s)
-        Trainer geneticAlgorithim = new GeneticAlgorithm();
+        Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
         
         // Initialize Experimenter
-        Experimenter experiment = new Experimenter(json);
+        Experimenter experiment = new Experimenter(json, new Trainer[]{new GeneticAlgorithm(GAParams)});
         
         // Run experiment
         experiment.run(datasets);

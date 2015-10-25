@@ -29,10 +29,10 @@ public class Experimenter {
     public Experimenter(JSONObject in_initialNet) {
         initialNet = in_initialNet;
         trainers = new Trainer[4];
-        trainers[0] = new DifferentialEvolution();
-        trainers[1] = new MewLambdaEvolution();
-        trainers[2] = new DifferentialEvolution();
-        trainers[3] = new Backpropagation();
+//        trainers[0] = new DifferentialEvolution();
+//        trainers[1] = new MewLambdaEvolution();
+//        //trainers[2] = new GeneticAlgorithm();
+//        trainers[3] = new Backpropagation();
     }
     
     /**
@@ -43,6 +43,7 @@ public class Experimenter {
     public Experimenter(JSONObject in_initialNet, Trainer trainer) {
         initialNet = in_initialNet;
         trainers = new Trainer[1];
+        trainers[0] = trainer;
     }
     
     /**
@@ -101,7 +102,7 @@ public class Experimenter {
     private Results[] crossValidate(Trainer trainer, double[][] datasetA, double[][] datasetB) {
         Results[] results = new Results[2];
         
-        FeedForwardNeuralNetwork neuralNet = trainer.run(initialNet(), datasetB, null);
+        FeedForwardNeuralNetwork neuralNet = trainer.run(initialNet(), datasetB);
         
         double[][] data = new double[5][];
         
@@ -134,7 +135,7 @@ public class Experimenter {
             data[confidenceIndex][i] = confidence;
         }
         
-        neuralNet = trainer.run(initialNet(), datasetB, null);
+        neuralNet = trainer.run(initialNet(), datasetB);
         
         data = new double[5][];
         

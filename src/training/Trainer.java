@@ -7,5 +7,5 @@ import feedforward.FeedForwardNeuralNetwork;
  */
 public interface Trainer
 {
-    FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples, double[] parameters);
+    FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples);
 }

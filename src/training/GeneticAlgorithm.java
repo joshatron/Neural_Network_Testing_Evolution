@@ -4,9 +4,10 @@ import feedforward.FeedForwardNeuralNetwork;
 
 public class GeneticAlgorithm implements Trainer
 {
-    public GeneticAlgorithm()
+    double[] parameters;
+    public GeneticAlgorithm(double[] parameters)
     {
-        
+        this.parameters = parameters;
     }
 
     /**
@@ -213,7 +214,6 @@ public class GeneticAlgorithm implements Trainer
      *
      * @param net
      * @param examples
-     * @param parameters
      * [0] => # of children
      * [1] => # of generations
      * [2] => mutation rate
@@ -225,7 +225,7 @@ public class GeneticAlgorithm implements Trainer
      * @return
      */
     @Override
-    public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples, double[] parameters)
+    public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples)
     {
         int numbOfChildren = (int) parameters[0];
         int generations = (int) parameters[1];
