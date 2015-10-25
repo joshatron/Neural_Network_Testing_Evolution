@@ -114,8 +114,16 @@ public class Backpropagation implements Trainer
                     sum += allOutputs[k - 1][t] * net.getWeight(k - 1, t, k, a);
                 }
                 sum += net.getBiasNum() * net.getWeight(-1, 0, k, a);
-                allOutputs[k][a] = net.applyActivationFunction(sum);
-                allErrors[k][a] = net.applyActivationFunctionDerivative(sum);
+                if(k != hiddenLayers + 1)
+                {
+                    allOutputs[k][a] = net.applyActivationFunction(sum, net.getHiddenActivationFunction());
+                    allErrors[k][a] = net.applyActivationFunctionDerivative(sum, net.getHiddenActivationFunction());
+                }
+                else
+                {
+                    allOutputs[k][a] = net.applyActivationFunction(sum, net.getOutputActivationFunction());
+                    allErrors[k][a] = net.applyActivationFunctionDerivative(sum, net.getOutputActivationFunction());
+                }
             }
             lastLayer = sizes[k];
         }

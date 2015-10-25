@@ -25,9 +25,9 @@ public class FeedForwardNeuralNetwork
     private int hiddenLayers;
     private int[] sizes;
     private int biggestSize;
-    private ActivationFunction activationFunction;
+    private ActivationFunction hiddenActivationFunction, outputActivationFunction;
     private double biasNum = 1.;
-    private double linearSlope = .0001;
+    private double linearSlope = 1.;
 
     //last deltas to be used for momentum
     private double[] lastDeltas;
@@ -50,14 +50,28 @@ public class FeedForwardNeuralNetwork
     {
         hiddenLayers = net.getInt("hiddenLayers");
 
-        String activation = net.getString("activationFunction");
+        String activation = net.getString("hiddenActivationFunction");
         if(activation.equals("LINEAR"))
         {
-            activationFunction = ActivationFunction.LINEAR;
+            hiddenActivationFunction = ActivationFunction.LINEAR;
         }
         else if(activation.equals("LOGISTIC"))
         {
-            activationFunction = ActivationFunction.LOGISTIC;
+            hiddenActivationFunction = ActivationFunction.LOGISTIC;
+        }
+        else
+        {
+            System.out.println("Illegal activation function.");
+        }
+
+        activation = net.getString("outputActivationFunction");
+        if(activation.equals("LINEAR"))
+        {
+            outputActivationFunction = ActivationFunction.LINEAR;
+        }
+        else if(activation.equals("LOGISTIC"))
+        {
+            outputActivationFunction = ActivationFunction.LOGISTIC;
         }
         else
         {
@@ -119,13 +133,15 @@ public class FeedForwardNeuralNetwork
      * Initialize a new net with the following parameters and random weights
      * @param hiddenLayers Number of hidden layers
      * @param sizes Size of each layer, starting with the input and ending with the output
-     * @param activationFunction Activation function to use
+     * @param hiddenActivationFunction Activation function to use for hidden nodes
+     * @param outputActivationFunction Activation function to use for the ouput layer
      */
-    public FeedForwardNeuralNetwork(int hiddenLayers, int[] sizes, ActivationFunction activationFunction)
+    public FeedForwardNeuralNetwork(int hiddenLayers, int[] sizes, ActivationFunction hiddenActivationFunction, ActivationFunction outputActivationFunction)
     {
         this.hiddenLayers = hiddenLayers;
         this.sizes = sizes;
-        this.activationFunction = activationFunction;
+        this.hiddenActivationFunction = hiddenActivationFunction;
+        this.outputActivationFunction = outputActivationFunction;
 
         biggestSize = 0;
         for(int k = 0; k < sizes.length; k++)
@@ -185,7 +201,8 @@ public class FeedForwardNeuralNetwork
     {
         JSONObject net = new JSONObject();
         net.put("hiddenLayers", hiddenLayers);
-        net.put("activationFunction", activationFunction.name());
+        net.put("hiddenActivationFunction", hiddenActivationFunction.name());
+        net.put("outputActivationFunction", outputActivationFunction.name());
         net.put("sizes", new JSONArray(sizes));
         net.put("weights", new JSONArray(weights));
 
@@ -242,7 +259,14 @@ public class FeedForwardNeuralNetwork
                     sum += layerOut[t] * getWeight(k - 1, t, k, a);
                 }
                 sum += biasNum * getWeight(-1, 0, k, a);
-                tempOut[a] = applyActivationFunction(sum);
+                if(k != hiddenLayers + 1)
+                {
+                    tempOut[a] = applyActivationFunction(sum, hiddenActivationFunction);
+                }
+                else
+                {
+                    tempOut[a] = applyActivationFunction(sum, outputActivationFunction);
+                }
             }
             lastLayer = sizes[k];
             //fill out return
@@ -330,7 +354,7 @@ public class FeedForwardNeuralNetwork
      * @param sum The value to plug into the function
      * @return The value returned by applying the function to the value
      */
-    public double applyActivationFunction(double sum)
+    public double applyActivationFunction(double sum, ActivationFunction activationFunction)
     {
         switch(activationFunction)
         {
@@ -349,7 +373,7 @@ public class FeedForwardNeuralNetwork
      * @param sum the value to plug into the function
      * @return The value returned by applying the function to the value
      */
-    public double applyActivationFunctionDerivative(double sum)
+    public double applyActivationFunctionDerivative(double sum, ActivationFunction activationFunction)
     {
         switch(activationFunction)
         {
@@ -363,21 +387,55 @@ public class FeedForwardNeuralNetwork
         return -9999;
     }
 
+    /**
+     * Gets an array of all the weights for the net
+     * @return double array of weights
+     */
     public double[] getWeights()
     {
         return weights;
     }
 
+    /**
+     * Gets the array of sizes of each layer
+     * @return double array with layer sizes with input being at index 0
+     */
     public int[] getSizes()
     {
         return sizes;
     }
 
+    /**
+     * Gets the magnitude of the bias value
+     * @return a double that is the bias value
+     */
     public double getBiasNum()
     {
         return biasNum;
     }
 
+    /**
+     * Gets the activation function used by hidden layers
+     * @return an ActivationFunction enum
+     */
+    public ActivationFunction getHiddenActivationFunction()
+    {
+        return hiddenActivationFunction;
+    }
+
+    /**
+     * Gets the activation function used by output layer
+     * @return an ActivationFunction enum
+     */
+    public ActivationFunction getOutputActivationFunction()
+    {
+        return outputActivationFunction;
+    }
+
+    /**
+     * sets the weights for the net
+     * @param weights array of doubles that has weight values
+     */
     public void setWeights(double[] weights)
     {
         this.weights = weights;
