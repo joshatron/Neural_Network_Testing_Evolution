@@ -52,7 +52,7 @@ public class Main
         Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
         
         // Initialize Experimenter
-        Experimenter experiment = new Experimenter(json, new Trainer[]{new GeneticAlgorithm(GAParams)});
+        Experimenter experiment = new Experimenter(json, new Trainer[]{geneticAlgorithim});
         
         // Run experiment
         experiment.run(datasets);

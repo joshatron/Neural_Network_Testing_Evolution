@@ -30,7 +30,7 @@ public class Experimenter {
         initialNet = in_initialNet;
         trainers = new Trainer[4];
 //        trainers[0] = new DifferentialEvolution();
-//        trainers[1] = new MewLambdaEvolution();
+//        trainers[1] = new MuLambdaEvolution();
 //        //trainers[2] = new GeneticAlgorithm();
 //        trainers[3] = new Backpropagation();
     }

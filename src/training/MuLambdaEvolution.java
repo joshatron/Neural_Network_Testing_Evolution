@@ -2,10 +2,10 @@ package training;
 
 import feedforward.FeedForwardNeuralNetwork;
 
-public class MewLambdaEvolution implements Trainer
+public class MuLambdaEvolution implements Trainer
 {
     double[] parameters;
-    public MewLambdaEvolution(double[] parameters)
+    public MuLambdaEvolution(double[] parameters)
     {
         this.parameters = parameters;
     }
