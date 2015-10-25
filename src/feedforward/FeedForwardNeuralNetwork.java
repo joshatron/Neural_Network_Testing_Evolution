@@ -29,9 +29,6 @@ public class FeedForwardNeuralNetwork
     private double biasNum = 1.;
     private double linearSlope = 1.;
 
-    //last deltas to be used for momentum
-    private double[] lastDeltas;
-
     /**
      * Creates the net from a JSON file
      * @param file The file containing the JSON
@@ -126,7 +123,8 @@ public class FeedForwardNeuralNetwork
             generateRandomWeights();
         }
 
-        lastDeltas = new double[weights.length];
+        biasNum = net.getDouble("biasNum");
+        linearSlope = net.getDouble("linearSlope");
     }
 
     /**
@@ -153,7 +151,14 @@ public class FeedForwardNeuralNetwork
         }
 
         generateRandomWeights();
-        lastDeltas = new double[weights.length];
+    }
+
+    public FeedForwardNeuralNetwork(int hiddenLayers, int[] sizes, ActivationFunction hiddenActivationFunction, ActivationFunction outputActivationFunction, double biasNum, double linearSlope)
+    {
+        this(hiddenLayers, sizes, hiddenActivationFunction, outputActivationFunction);
+
+        this.biasNum = biasNum;
+        this.linearSlope = linearSlope;
     }
 
     /**
@@ -205,6 +210,8 @@ public class FeedForwardNeuralNetwork
         net.put("outputActivationFunction", outputActivationFunction.name());
         net.put("sizes", new JSONArray(sizes));
         net.put("weights", new JSONArray(weights));
+        net.put("biasNum", biasNum);
+        net.put("linearSlope", linearSlope);
 
         return net;
     }
