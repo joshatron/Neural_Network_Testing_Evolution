@@ -25,6 +25,20 @@ public class Main
             5,
             0
     };
+    
+    // Array of every file name
+    public static String[] file = {//                    Index | Description
+        "data/Glass.csv",//------------------------------> 0   | https://archive.ics.uci.edu/ml/datasets/Glass+Identification
+        "data/turkiye-student-evaluation_generic.csv",//-> 1   | https://archive.ics.uci.edu/ml/datasets/Turkiye+Student+Evaluation
+        "data/ThoraricSurgery.csv",//--------------------> 2   | https://archive.ics.uci.edu/ml/datasets/Thoracic+Surgery+Data
+        "data/biodeg.csv",//-----------------------------> 3   | https://archive.ics.uci.edu/ml/datasets/QSAR+biodegradation
+        "data/seismic-bumps.csv",//----------------------> 4   | https://archive.ics.uci.edu/ml/datasets/seismic-bumps
+        "data/sensor_readings_24.csv",//-----------------> 5   | https://archive.ics.uci.edu/ml/datasets/Wall-Following+Robot+Navigation+Data
+        "data/SPECTF.csv",//-----------------------------> 6   | https://archive.ics.uci.edu/ml/datasets/SPECTF+Heart
+        "data/kr-vs-kp.csv",//---------------------------> 7   | https://archive.ics.uci.edu/ml/datasets/Chess+%28King-Rook+vs.+King-Pawn%29
+        "data/cmc.csv",//--------------------------------> 8   | https://archive.ics.uci.edu/ml/datasets/Contraceptive+Method+Choice
+        "data/zoo.csv",//--------------------------------> 9   | https://archive.ics.uci.edu/ml/datasets/Zoo
+    };
 
     /**
      * 
@@ -32,12 +46,9 @@ public class Main
      */
     public static void main(String[] args)
     {
+        int fileIndex = 0;  // Specify the file to use (see file array)
         
-        // Load all of the datasets and put them into one 3D double array
-        double[][] dataset1 = new double[][]{{1.0}};
-        double[][] dataset2 = new double[][]{{1.0}};
-        double[][] dataset3 = new double[][]{{1.0}};
-        double[][][] datasets = new double[][][]{dataset1,dataset2,dataset3};
+        double[][] dataset = DataTools.getDataFromFile(file[fileIndex]);
         
         // Load the initial neural net into a JSONObject.
         File initialNet = new File("neuralNet.JSON");
@@ -55,7 +66,7 @@ public class Main
         Experimenter experiment = new Experimenter(json, new Trainer[]{geneticAlgorithim});
         
         // Run experiment
-        experiment.run(datasets);
+        experiment.run(dataset);
         
     }
     

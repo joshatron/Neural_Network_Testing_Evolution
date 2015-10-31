@@ -21,11 +21,12 @@ public class Results {
         stats = new double[length + 2][];
         
         for (int i = 0; i < stats.length; i++) {
-            stats[i] = statistics[i];
             
             if (i >= length) {
                 stats[i] = null;
-            } 
+            }  else {
+                stats[i] = statistics[i];
+            }
         }
         
         predictedMean = 0.0;
@@ -41,7 +42,7 @@ public class Results {
         double totalCorrect = 0.0;
         for (int i = 0; i < stats[index].length; i++) {
             if (stats[index][i] == stats[predictedIndex][i]) {
-                totalCorrect += stats[predictedIndex][i];
+                totalCorrect += 1.0;
             }
         }
         

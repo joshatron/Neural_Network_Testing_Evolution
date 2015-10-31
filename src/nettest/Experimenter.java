@@ -22,31 +22,6 @@ public class Experimenter {
     private final Trainer[] trainers;
     
     /**
-     * Constructor assumes all Training algorithms have been tuned and are ready
-     * for testing.
-     * @param in_initialNet JSONObject holding parameters for the initial neural net.
-     */
-    public Experimenter(JSONObject in_initialNet) {
-        initialNet = in_initialNet;
-        trainers = new Trainer[4];
-//        trainers[0] = new DifferentialEvolution();
-//        trainers[1] = new MuLambdaEvolution();
-//        //trainers[2] = new GeneticAlgorithm();
-//        trainers[3] = new Backpropagation();
-    }
-    
-    /**
-     * Constructor passes a single Trainer object for testing purposes.
-     * @param in_initialNet JSONObject holding parameters for the initial neural net.
-     * @param trainer Trainer whose run() method will be called.
-     */
-    public Experimenter(JSONObject in_initialNet, Trainer trainer) {
-        initialNet = in_initialNet;
-        trainers = new Trainer[1];
-        trainers[0] = trainer;
-    }
-    
-    /**
      * Constructor passes an array of Trainer objects to iterate through this
      * experiment. 
      * @param in_initialNet JSONObject holding parameters for the initial neural net.
@@ -58,19 +33,37 @@ public class Experimenter {
     }
     
     /**
-     * Run every Trainer on every dataset.
-     * @param datasets  Array of different datasets to test.
+     * Run every Trainer on the dataset.
+     * @param dataset  Array of different datasets to test.
      */
-    public void run(double[][][] datasets) {
-        for (double[][] dataset : datasets) {
-            double[][][] partitionedData = DataTools.partitionData(dataset);
-            for (Trainer trainer : trainers) {
-                Results[][] results = test(trainer,partitionedData);
+    public void run(double[][] dataset) {
+        double[][][] partitionedData = DataTools.partitionData(dataset);
+        for (Trainer trainer : trainers) {
+            Results[][] results = test(trainer,partitionedData);
+            double[] percentsCorrect = new double[5];
+            double[] averageConfidences = new double[5];
+            
+            double percentCorrect = 0.0;
+            double averageConfidence = 0.0;
+            
+            for (int i = 0; i < 5; i++) {
+                percentsCorrect[i] = ( results[i][0].percentCorrect() +
+                                       results[i][1].percentCorrect() ) / 2;
                 
-                System.out.println("Trainer: " + trainer.toString());
-                System.out.println("Percent correct: " + results[0][0].percentCorrect());
-                System.out.println("Mean confidence: " + results[0][0].getMean(Results.Index.CONFIDENCE));
+                percentCorrect += percentsCorrect[i];
+                
+                averageConfidences[i] = ( results[i][0].getMean(Results.Index.CONFIDENCE) +
+                                          results[i][1].getMean(Results.Index.CONFIDENCE) ) / 2;
+                
+                averageConfidence += averageConfidences[i];
             }
+            
+            percentCorrect /= 5;
+            averageConfidence /= 5;
+            
+            System.out.println("Trainer: " + trainer.toString());
+            System.out.println("Percent correct: " + percentCorrect);
+            System.out.println("Mean confidence: " + averageConfidence);
         }
     }
     

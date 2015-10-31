@@ -6,106 +6,138 @@ package nettest;
  */
 import java.io.IOException;
 import java.io.File;
-import java.io.PrintWriter;
-import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IllegalFormatException;
+import java.util.Scanner;
 
 public class DataTools {
     
-    // Size of the input domain. Actual domain will be plus or minus 0.5 * domainSize.
-    private static final float domainSize = 10.0f;
     private static final java.util.Random rand = new java.util.Random();
 
     /**
-     * Create a JSON with a 2D array of doubles. All but the last double in each
-     * array are inputs to the Rosenbrock function, and the last double is the
-     * output. The range of the inputs is [-5,5).
-     *
-     * @param numInputs number of inputs for the Rosenbrock function
-     * @param setSize   number of instances the output dataset will have
-     * @return 2D array of the specified dataset.
+     * Set the specified column as the class attribute, making it the last column.
+     * @param dataset
+     * @param classColumn
+     * @return the modified dataset
      */
-    public static double[][] generateData(int numInputs, int setSize) {
-        JSONObject dataset = new JSONObject();
-        double[][] data = new double[setSize][numInputs+1];
-        for (int i = 0; i < setSize; i++) {
-            double[] inputs = new double[numInputs]; // Next instance's inputs
-
-            for (int j = 0; j < numInputs; j++) {   // Generate a random value for each input
-                inputs[j] = Math.random() * domainSize - domainSize/2.0f;
-                data[i][j] = inputs[j];
-            }
-
-            JSONArray instance = new JSONArray(inputs);
-
-            // Set the final double to the output of the Rosenbrock function
-            data[i][numInputs] = rosenbrock(inputs);
-            instance = instance.put(data[i][numInputs]);
-
-            String name = String.format("a%d", i);
-            dataset.put(name, instance);
-        }
-
-        // Relative path. Must create a directory "~/data/"  to save the JSON.
-        try (PrintWriter writer = new PrintWriter(String.format("data/%dD_Data_%d_vectors.JSON", numInputs, setSize), "UTF-8")) {
-            writer.write(dataset.toString());
-            writer.close();
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-        return data;
-    }
-
-    /**
-     * Get a dataset from a JSON created by the generateData() method. If the
-     * specified data set has not been created, generate one.
-     * @param numInputs number of inputs used by the dataset
-     * @param setSize   number of instances
-     * @return          2D array data[i][j], where i = [0,setSize] and j = [0,numInputs]
-     */
-    public static double[][] getDataFromFile(int numInputs, int setSize) {
-        // Relative path. Must create a directory "~/data/"  
-        File file = new File(String.format("data/%dD_Data_%d_vectors.JSON", numInputs, setSize));
-        double[][] data;
-
-        try {
-            String json = FileUtils.readFileToString(file);
-            JSONObject jsonObject = new JSONObject(json);
-
-            data = new double[setSize][numInputs + 1];
-
-            for (int i = 0; i < setSize; i++) {
-                JSONArray instance = jsonObject.getJSONArray(String.format("a%d", i));
-
-                for (int j = 0; j < numInputs+1; j++) {
-                    data[i][j] = instance.getDouble(j);
+    private static double[][] setClass(double[][] dataset, int classColumn) {
+        if (dataset != null) {
+            double[][] newDataset = new double[dataset.length][dataset[0].length];
+            
+            for (int i = 0; i < dataset.length; i++) {
+                int newColumnIndex = 0;
+                for (int j = 0; j < dataset[i].length; j++) {
+                    if (j == classColumn) {
+                        newDataset[i][dataset[i].length - 1] = dataset[i][j];
+                    } else {
+                        newDataset[i][newColumnIndex] = dataset[i][j];
+                        newColumnIndex++;
+                    }
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Dataset does not exist. Creating a new dataset.");
-            data = generateData(numInputs, setSize);
+            
+            return newDataset;
+        } else {
+            return null;
         }
-
-        return data;
-    }
-
-    /**
-     * Given an array of arbitrary size n, calculate the output of the Rosenbrock 
-     * function that takes n variables.
-     *
-     * @param x array of inputs to the function
-     * @return  result of the function
-     */
-    public static double rosenbrock(double[] x) {
-        double result = 0;
-        for (int i = 0; i < x.length - 1; i++) {
-            result += Math.pow(1 - x[i], 2) + 100 * Math.pow((x[i + 1] - x[i] * x[i]), 2);
-        }
-        return result;
     }
     
-        /**
+    /**
+     * Get a dataset from a CSV.
+     * @param file_name
+     * @return 2D array data[i][j]
+     */
+    public static double[][] getDataFromFile(String file_name) {
+        // Relative path. Must create a directory "~/data/"  
+        File file = new File(file_name);
+        ArrayList<ArrayList<Double>> relation = new ArrayList();
+
+        HashMap<String, Double> replace = new HashMap();
+        
+        double newValue = 1.0;
+        
+        try {
+            
+            Scanner scan = new Scanner(new File(file_name));
+            
+            String comma = ",";
+            
+            while(scan.hasNext()) {
+                ArrayList<Double> tuple = new ArrayList();
+                String line = scan.nextLine();
+                line = line.trim();
+                while (line.contains(comma)) {
+                    
+                    int index = line.indexOf(comma);
+                    String value = line.substring(0,index);
+                    
+                    double parseValue = 0.0;
+                    
+                    try {
+                        parseValue += Double.parseDouble(value);
+                    } catch(NumberFormatException x) {
+                        if (replace.containsKey(value)) {
+                            parseValue = replace.get(value);
+                        } else {
+                            replace.put(value, newValue);
+                            parseValue = newValue;
+                            newValue += 1.0;
+                        }
+                    }
+                    
+                    tuple.add(parseValue);
+                    
+                    line = line.substring(index + 1);
+                }
+                
+                if (line.length() > 0) {
+                    double parseValue = 0.0;
+                    
+                    try {
+                        parseValue += Double.parseDouble(line);
+                    } catch(NumberFormatException x) {
+                        if (replace.containsKey(line)) {
+                            parseValue = replace.get(line);
+                        } else {
+                            replace.put(line, newValue);
+                            parseValue = newValue;
+                            newValue += 1.0;
+                        }
+                    }
+                    
+                    tuple.add(parseValue);
+                }
+                
+                relation.add(tuple);
+            }
+        } catch (IOException e) {
+            System.out.println("Dataset does not exist.");
+            return null;
+        }
+
+        double[][] data = new double[relation.size()][relation.get(0).size()];
+        
+        for (int i = 0; i < relation.size(); i++) {
+            ArrayList<Double> tuple = relation.get(i);
+            for (int j = 0; j < tuple.size(); j++) {
+                data[i][j] = tuple.get(j);
+            }
+        }
+        
+        switch(file_name) {
+            case "data/SPECTF.csv":
+                data = setClass(data, 0);
+                break;
+            case "data/turkiye-student-evaluation_generic.csv":
+                data = setClass(data, 1);
+                break;
+        }
+        
+        return data;
+    }
+    
+    /**
      * Randomly partition the dataset into two equal subsets, one training and
      * one testing
      * @param dataset data to be partitioned
@@ -177,9 +209,5 @@ public class DataTools {
     public static double plusOrMinus10(double output) {
         double newVal = output + output * 1 * Math.pow(-1, (double)(rand.nextInt(2) + 1)); //Math.pow(-1, (double)(rand.nextInt(2) + 1)) * 2 * output * Math.random() + output;
         return newVal;
-    }
-    
-    public static float getDomainSize() {
-        return domainSize;
     }
 }
