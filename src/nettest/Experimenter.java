@@ -112,15 +112,13 @@ public class Experimenter {
             
             double predictedValue, confidence;
             
-            if (confidences[0] > confidences[1]) {
-                confidence = confidences[0];
-                predictedValue = 0;
-            } else if (confidences[0] < confidences[1] || Math.random() < 0.5) {
-                confidence = confidences[1];
-                predictedValue = 1;
-            } else {
-                confidence = confidences[0];
-                predictedValue = 0;
+            confidence = -1;
+            predictedValue = -1;
+            
+            for (int j = 0; i < confidences.length; i++) {
+                if (confidences[i] > confidence) {
+                    predictedValue = i;
+                }
             }
             
             data[predictedIndex][i] = predictedValue;
@@ -145,15 +143,13 @@ public class Experimenter {
             
             double predictedValue, confidence;
             
-            if (confidences[0] > confidences[1]) {
-                confidence = confidences[0];
-                predictedValue = 0;
-            } else if (confidences[0] < confidences[1] || Math.random() < 0.5) {
-                confidence = confidences[1];
-                predictedValue = 1;
-            } else {
-                confidence = confidences[0];
-                predictedValue = 0;
+            confidence = -1;
+            predictedValue = -1;
+            
+            for (int j = 0; i < confidences.length; i++) {
+                if (confidences[i] > confidence) {
+                    predictedValue = i;
+                }
             }
             
             data[predictedIndex][i] = predictedValue;
