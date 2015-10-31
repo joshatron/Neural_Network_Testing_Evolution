@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import feedforward.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main
 {
@@ -37,6 +38,29 @@ public class Main
         "data/zoo.csv",//--------------------------------> 9   | https://archive.ics.uci.edu/ml/datasets/Zoo
     };
     
+    
+    
+    /**
+     * 
+     */
+    public static double[] MLParams = {
+        
+    };
+    
+    /**
+     * 
+     */
+    public static double[] DiffParams = {
+        
+    };
+    
+    /**
+     * 
+     */
+    public static double[] BackpropParams = {
+        
+    };
+    
     /**
      * [0] => # of children
      * [1] => # of generations
@@ -57,13 +81,34 @@ public class Main
     };
     
     /**
-     * 
+     * To run a specific training algorithm, specify its parameters in its
+     * respective array and select set the fileIndex variable to the index of 
+     * the desired dataset (described above).
      * @param args the command line arguments
      */
     public static void main(String[] args)
     {
         int fileIndex = 0;  // Specify the file to use (see file array)
         
+        // Initialize Trainer(s)
+        Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
+        Trainer muLambdaEvolution = new MuLambdaEvolution(MLParams); 
+        Trainer differentialEvolution = new DifferentialEvolution(DiffParams); 
+        Trainer backpropagation = new Backpropagation(BackpropParams); 
+        
+        Trainer[] trainers = new Trainer[] {
+            geneticAlgorithim,
+//            muLambdaEvolution,
+//            differentialEvolution,
+//            backpropagation,
+        };
+        
+        
+        //Nothing below here needs to be changed. 
+        //It loads the specified dataset and neural net
+        
+        
+        // Initialize dataset
         double[][] dataset = DataTools.getDataFromFile(dataFile[fileIndex]);
         
         // Load the initial neural net into a JSONObject.
@@ -72,7 +117,19 @@ public class Main
         try {
             json = new JSONObject(FileUtils.readFileToString(initialNet));
         } catch (java.io.IOException e1) {
-            FeedForwardNeuralNetwork neuralNet = new FeedForwardNeuralNetwork(1, new int[] { dataset[0].length, 10000, dataset[0].length + 1 }, ActivationFunction.LOGISTIC, ActivationFunction.LOGISTIC);
+            
+            int index = dataset[0].length - 1;
+            int numOutputs = 0;
+            ArrayList<Double> values = new ArrayList<>();
+            
+            for (int i = 0; i < dataset.length; i++) {
+                Double value = dataset[i][index];
+                if (!values.contains(value)) {
+                    numOutputs++;
+                    values.add(value);
+                }
+            }
+            FeedForwardNeuralNetwork neuralNet = new FeedForwardNeuralNetwork(1, new int[] { dataset[0].length, 100, numOutputs }, ActivationFunction.LOGISTIC, ActivationFunction.LOGISTIC);
             try {
                 neuralNet.export(new File(neuralNetFile[fileIndex]));
             } catch(IOException e2) {
@@ -82,11 +139,8 @@ public class Main
             json = neuralNet.export();
         }
         
-        // Initialize Trainer(s)
-        Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
-        
         // Initialize Experimenter
-        Experimenter experiment = new Experimenter(json, new Trainer[]{geneticAlgorithim});
+        Experimenter experiment = new Experimenter(json, trainers);
         
         // Run experiment
         experiment.run(dataset);
