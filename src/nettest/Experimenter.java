@@ -62,7 +62,7 @@ public class Experimenter {
             averageConfidence /= 5;
             
             System.out.println("Trainer: " + trainer.toString());
-            System.out.println("Percent correct: " + percentCorrect);
+            System.out.println("Percent correct: " + (percentCorrect * 100));
             System.out.println("Mean confidence: " + averageConfidence);
         }
     }
@@ -94,9 +94,9 @@ public class Experimenter {
      */
     private Results[] crossValidate(Trainer trainer, double[][] datasetA, double[][] datasetB) {
         Results[] results = new Results[2];
-        
+
         FeedForwardNeuralNetwork neuralNet = trainer.run(initialNet(), datasetB);
-        
+
         double[][] data = new double[5][];
         
         data[trueIndex] = new double[datasetA.length];
@@ -115,9 +115,10 @@ public class Experimenter {
             confidence = -1;
             predictedValue = -1;
             
-            for (int j = 0; i < confidences.length; i++) {
-                if (confidences[i] > confidence) {
-                    predictedValue = i;
+            for (int j = 0; j < confidences.length; j++) {
+                if (confidences[j] > confidence) {
+                    predictedValue = j;
+                    confidence = confidences[j];
                 }
             }
             
@@ -146,9 +147,10 @@ public class Experimenter {
             confidence = -1;
             predictedValue = -1;
             
-            for (int j = 0; i < confidences.length; i++) {
-                if (confidences[i] > confidence) {
-                    predictedValue = i;
+            for (int j = 0; j < confidences.length; j++) {
+                if (confidences[j] > confidence) {
+                    predictedValue = j;
+                    confidence = confidences[j];
                 }
             }
             

@@ -5,6 +5,8 @@ import feedforward.FeedForwardNeuralNetwork;
 public class GeneticAlgorithm implements Trainer
 {
     double[] parameters;
+    FeedForwardNeuralNetwork net;
+
     public GeneticAlgorithm(double[] parameters)
     {
         this.parameters = parameters;
@@ -19,10 +21,12 @@ public class GeneticAlgorithm implements Trainer
 
         for (int i = 0; i < populationSize; i++)
         {
-            for (int j = 0; j < numbOfWeights; j++)
-            {
-                population[i][j] = Math.random();
-            }
+            this.net.generateRandomWeights();
+            population[i] = this.net.getWeights();
+//            for (int j = 0; j < numbOfWeights; j++)
+//            {
+//                population[i][j] = Math.random() * 2 - 1;
+//            }
         }
 
         return population;
@@ -171,7 +175,7 @@ public class GeneticAlgorithm implements Trainer
                 currentSize++;
             }
 
-            index++;
+            index = (index + 1) % scores.length;
         }
 
         return newPop;
@@ -182,7 +186,54 @@ public class GeneticAlgorithm implements Trainer
      */
     public double fitnessFunction(double[] weights, double[][] examples)
     {
-        return Math.random();
+        double score = 0;
+        net.setWeights(weights);
+        int trials = 0;
+        for (int i = 0; i < Math.min(examples.length, 100); i++)
+        {
+            trials++;
+            double[] confidences = this.net.compute(examples[i]);
+            int len = examples[i].length - 1;
+
+            int index = 0;
+            double bestConfidence = 0;
+
+            for (int j = 0; j < confidences.length; j++)
+            {
+                if (confidences[j] > bestConfidence)
+                {
+                    bestConfidence = confidences[j];
+                    index = j;
+                }
+                else
+                {
+                    //System.out.println(confidences[j]);
+                }
+            }
+
+           // System.out.println(bestConfidence);
+
+            //System.out.println(examples[i][len]);
+            if (index == examples[i][len])
+            {
+//                System.out.println("We were correct!");
+                //score += bestConfidence;
+                score += 1;
+            }
+            else if (bestConfidence > 0)
+            {
+//                System.out.println("%%%%%%%%%%%%%%%%%%%%%");
+                score += Math.exp(-1 * bestConfidence);
+            }
+        }
+
+//        if (score < (trials / 10)) {
+//            score = trials / 10;
+//        }
+
+        //System.out.println(score);
+
+        return score / (trials);
     }
 
     /**
@@ -209,6 +260,25 @@ public class GeneticAlgorithm implements Trainer
         return combo;
     }
 
+    public double[] getBestWeights(double[][] pop, double[][] examples)
+    {
+        double[] best = pop[1];
+        double bestFitness = fitnessFunction(best, examples);
+
+        for (int i = 1; i < pop.length; i++)
+        {
+            double[] current = pop[1];
+            double currentFitness = fitnessFunction(current, examples);
+            if (currentFitness > bestFitness)
+            {
+                bestFitness = currentFitness;
+                best = current;
+            }
+        }
+
+        return best;
+    }
+
     /**
      * This function will use GA to train a neural net
      *
@@ -227,23 +297,32 @@ public class GeneticAlgorithm implements Trainer
     @Override
     public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples)
     {
+        this.net = net;
         int numbOfChildren = (int) parameters[0];
         int generations = (int) parameters[1];
         double mutationRate = parameters[2];
         double crossoverRate = parameters[3];
         int poopulationSize = (int) parameters[4];
-        int numbOfWeights = (int) parameters[5];
+        int numbOfWeights = net.getWeights().length;
         int crossoverType = (int) parameters[6];
 
         double[][] population = initialize(poopulationSize, numbOfWeights);
 
         for (int i = 0; i < generations; i++)
         {
+            //System.out.println("Running Generationg: " + i);
             double[][] children = select(numbOfChildren, population, examples);
+            //System.out.println("Children have been selected");
             children = operate(children, mutationRate, crossoverRate, numbOfChildren, crossoverType);
+            //System.out.println("Children have been operated on");
             double[][] totalPop = combine(population, children);
+            //System.out.println("Populations have been combined");
             population = Replace(totalPop, poopulationSize, examples);
+            //System.out.println("Replacement has occured");
         }
+
+        //System.out.println("Picking best GA chromosome");
+        net.setWeights(getBestWeights(population, examples));
 
         return net;
     }

@@ -164,7 +164,7 @@ public class FeedForwardNeuralNetwork
     /**
      * Fills all the weights with random numbers between -1 and 1
      */
-    private void generateRandomWeights()
+    public void generateRandomWeights()
     {
         int lowest = -1;
         int highest = 1;
@@ -395,7 +395,7 @@ public class FeedForwardNeuralNetwork
     }
 
     /**
-     * Gets an array of all the weights for the net
+     * Gets an array of all the for the net
      * @return double array of weights
      */
     public double[] getWeights()

@@ -69,10 +69,12 @@ public class Main
      * [4] => populationSize
      * [5] => # of weights
      * [6] => crossover Type
+     *
+     * 9345794392523364
      */
     public static double[] GAParams = {
             50,
-            100,
+            10,
             0.01,
             0.1,
             50,
