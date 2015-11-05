@@ -37,14 +37,24 @@ public class Main
         "data/cmc.csv",//--------------------------------> 8   | https://archive.ics.uci.edu/ml/datasets/Contraceptive+Method+Choice
         "data/zoo.csv",//--------------------------------> 9   | https://archive.ics.uci.edu/ml/datasets/Zoo
     };
-    
-    
-    
+
+
+
     /**
-     * 
+     * [0] => Mu
+     * [1] => Lamda
+     * [2] => # of generations
+     * [3] => mutation rate
+     * [4] => cross over rate
+     * [5] => crossover Type
      */
     public static double[] MLParams = {
-        
+            25,
+            50,
+            100,
+            0.01,
+            0.1,
+            0
     };
     
     /**
@@ -69,12 +79,10 @@ public class Main
      * [4] => populationSize
      * [5] => # of weights
      * [6] => crossover Type
-     *
-     * 9345794392523364
      */
     public static double[] GAParams = {
             50,
-            10,
+            10000,
             0.01,
             0.1,
             50,
@@ -99,8 +107,8 @@ public class Main
         Trainer backpropagation = new Backpropagation(BackpropParams); 
         
         Trainer[] trainers = new Trainer[] {
-            geneticAlgorithim,
-//            muLambdaEvolution,
+//            geneticAlgorithim,
+            muLambdaEvolution,
 //            differentialEvolution,
 //            backpropagation,
         };

@@ -1,11 +1,17 @@
 package training;
 
+import com.sun.tools.javac.jvm.Gen;
 import feedforward.FeedForwardNeuralNetwork;
 
 public class GeneticAlgorithm implements Trainer
 {
     double[] parameters;
     FeedForwardNeuralNetwork net;
+
+    public GeneticAlgorithm()
+    {
+        System.out.println("GA default constructor called");
+    }
 
     public GeneticAlgorithm(double[] parameters)
     {
@@ -305,19 +311,28 @@ public class GeneticAlgorithm implements Trainer
         int poopulationSize = (int) parameters[4];
         int numbOfWeights = net.getWeights().length;
         int crossoverType = (int) parameters[6];
+        double[][][] paritionedExamples = new double[10][examples.length / 10][];
+
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < examples.length / 10; j++)
+            {
+                paritionedExamples[i][j] = examples[i*10 + j];
+            }
+        }
 
         double[][] population = initialize(poopulationSize, numbOfWeights);
 
         for (int i = 0; i < generations; i++)
         {
             //System.out.println("Running Generationg: " + i);
-            double[][] children = select(numbOfChildren, population, examples);
+            double[][] children = select(numbOfChildren, population, paritionedExamples[i%10]);
             //System.out.println("Children have been selected");
             children = operate(children, mutationRate, crossoverRate, numbOfChildren, crossoverType);
             //System.out.println("Children have been operated on");
             double[][] totalPop = combine(population, children);
             //System.out.println("Populations have been combined");
-            population = Replace(totalPop, poopulationSize, examples);
+            population = Replace(totalPop, poopulationSize, paritionedExamples[i%10]);
             //System.out.println("Replacement has occured");
         }
 
