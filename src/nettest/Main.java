@@ -58,10 +58,14 @@ public class Main
     };
     
     /**
-     * 
+     * [0] => populationSize
+     * [1] => # of generations
+     * [2] => Beta
      */
-    public static double[] DiffParams = {
-        
+    public static double[] DEParams = {
+        75,
+        100,
+        0.1
     };
     
     /**
@@ -82,7 +86,7 @@ public class Main
      */
     public static double[] GAParams = {
             50,
-            10000,
+            100,
             0.01,
             0.1,
             50,
@@ -103,13 +107,13 @@ public class Main
         // Initialize Trainer(s)
         Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
         Trainer muLambdaEvolution = new MuLambdaEvolution(MLParams); 
-        Trainer differentialEvolution = new DifferentialEvolution(DiffParams); 
+        Trainer differentialEvolution = new DifferentialEvolution(DEParams);
         Trainer backpropagation = new Backpropagation(BackpropParams); 
         
         Trainer[] trainers = new Trainer[] {
 //            geneticAlgorithim,
-            muLambdaEvolution,
-//            differentialEvolution,
+//            muLambdaEvolution,
+            differentialEvolution,
 //            backpropagation,
         };
         

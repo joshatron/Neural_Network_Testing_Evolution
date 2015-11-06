@@ -118,7 +118,7 @@ public class MuLambdaEvolution extends GeneticAlgorithm
 
         for (int i = 0; i < generations; i++)
         {
-            int crossoverParents = (int) (Math.random() * 5);
+            int crossoverParents = (int) (Math.random() * 5) + 1;
             //System.out.println("Running Generationg: " + i);
             double[][] children = select(lamda, population, paritionedExamples[i%10]);
             //System.out.println("Children have been selected");
