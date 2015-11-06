@@ -39,6 +39,7 @@ public class Experimenter {
     public void run(double[][] dataset) {
         double[][][] partitionedData = DataTools.partitionData(dataset);
         for (Trainer trainer : trainers) {
+            long startTime = System.currentTimeMillis();
             Results[][] results = test(trainer,partitionedData);
             double[] percentsCorrect = new double[5];
             double[] averageConfidences = new double[5];
@@ -60,10 +61,13 @@ public class Experimenter {
             
             percentCorrect /= 5;
             averageConfidence /= 5;
+
+            long end = System.currentTimeMillis();
             
             System.out.println("Trainer: " + trainer.toString());
             System.out.println("Percent correct: " + (percentCorrect * 100));
             System.out.println("Mean confidence: " + averageConfidence);
+            System.out.println("Average run time: " + (end - startTime) / 10 + "ms");
         }
     }
     
