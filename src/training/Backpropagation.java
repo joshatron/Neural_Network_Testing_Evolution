@@ -29,35 +29,32 @@ public class Backpropagation implements Trainer
     @Override
     public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples)
     {
+        System.out.println("Starting backprop");
         lastDeltas = new double[net.getWeights().length];
         learningRate = parameters[0];
         momentum = parameters[1];
 
         int[] sizes = net.getSizes();
 
-        //for each example
-        for(int k = 0; k < examples.length; k++)
+        int value = 100000 / examples.length;
+        for(int i = 0; i < value + 1; i++)
         {
-            double[] input = new double[sizes[0]];
-            double[] output = new double[sizes[sizes.length - 1]];
-
-            //separate input and output
-            int t = 0;
-            for(int a = 0; a < examples[0].length; a++)
+            //for each example
+            for(int k = 0; k < examples.length; k++)
             {
-                if(a < input.length)
+                double[] input = new double[sizes[0]];
+                double[] output = new double[sizes[sizes.length - 1]];
+
+                //separate input and output
+                for(int a = 0; a < input.length; a++)
                 {
                     input[a] = examples[k][a];
                 }
-                else
-                {
-                    output[a - t] = examples[k][a];
-                    t++;
-                }
-            }
+                output[(int)Math.round(examples[k][examples[0].length - 1])] = 1;
 
-            //run backprop on it
-            backprop(input, output, net);
+                //run backprop on it
+                backprop(input, output, net);
+            }
         }
 
         return net;

@@ -71,10 +71,12 @@ public class Main
     };
     
     /**
-     * 
+     * [0] => learning rate
+     * [1] => momentum
      */
     public static double[] BackpropParams = {
-        
+        .01,
+        .01
     };
     
     /**
@@ -116,10 +118,10 @@ public class Main
         Trainer backpropagation = new Backpropagation(BackpropParams); 
         
         Trainer[] trainers = new Trainer[] {
-            geneticAlgorithim,
+//            geneticAlgorithim,
 //            muLambdaEvolution,
 //            differentialEvolution,
-//            backpropagation,
+            backpropagation,
         };
         
         
@@ -148,7 +150,7 @@ public class Main
                     values.add(value);
                 }
             }
-            FeedForwardNeuralNetwork neuralNet = new FeedForwardNeuralNetwork(1, new int[] { dataset[0].length, 100, numOutputs }, ActivationFunction.LOGISTIC, ActivationFunction.LOGISTIC);
+            FeedForwardNeuralNetwork neuralNet = new FeedForwardNeuralNetwork(1, new int[] { dataset[0].length - 1, 100, numOutputs }, ActivationFunction.LOGISTIC, ActivationFunction.LOGISTIC);
             try {
                 neuralNet.export(new File(neuralNetFile[fileIndex]));
             } catch(IOException e2) {
