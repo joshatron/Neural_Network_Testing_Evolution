@@ -56,6 +56,7 @@ public class Backpropagation implements Trainer
                 backprop(input, output, net);
             }
         }
+        
         return net;
     }
 
