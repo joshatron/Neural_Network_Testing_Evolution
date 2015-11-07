@@ -75,8 +75,8 @@ public class Main
      * [1] => momentum
      */
     public static double[] BackpropParams = {
-        .01,
-        .01
+        .1,
+        .1
     };
     
     /**

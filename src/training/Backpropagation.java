@@ -57,6 +57,12 @@ public class Backpropagation implements Trainer
             }
         }
 
+        double[] weights = net.getWeights();
+        for(int i = 0; i < weights.length; i++)
+        {
+            System.out.print(weights[i] + ", ");
+        }
+        System.out.println();
         return net;
     }
 

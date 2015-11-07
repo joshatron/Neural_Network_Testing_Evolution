@@ -283,7 +283,13 @@ public class FeedForwardNeuralNetwork
             }
         }
 
-        return layerOut;
+        double[] toReturn = new double[sizes[sizes.length - 1]];
+        for(int k = 0; k < toReturn.length; k++)
+        {
+            toReturn[k] = layerOut[k];
+        }
+
+        return toReturn;
     }
 
     /**
