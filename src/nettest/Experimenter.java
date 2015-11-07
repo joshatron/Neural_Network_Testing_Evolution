@@ -157,7 +157,6 @@ public class Experimenter {
                 inputs[j] = datasetB[i][j];
             }
             double[] confidences = neuralNet.compute(inputs);
-            
             double predictedValue, confidence;
             
             confidence = -1;
