@@ -78,7 +78,7 @@ public class Experimenter {
      * Returns one pair of Results objects for every iteration of cross
      * validation, for a total of 5 pairs.
      * @param trainer   Trainer used to train the neural network
-     * @param datasets  Training and testing datasets for cross validation
+     * @param dataset  Training and testing datasets for cross validation
      * @return Results[5][2], 5 pairs of Results objects.
      */
     public Results[][] test(Trainer trainer, double[][] dataset) {
@@ -157,11 +157,6 @@ public class Experimenter {
                 inputs[j] = datasetB[i][j];
             }
             double[] confidences = neuralNet.compute(inputs);
-
-//            for(int j = 0; j < confidences.length; j++) {
-//                System.out.format("%.5f,",confidences[j]);
-//            }
-            System.out.println(confidences.length);
             
             double predictedValue, confidence;
             
