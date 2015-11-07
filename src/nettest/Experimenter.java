@@ -158,11 +158,7 @@ public class Experimenter {
             }
             double[] confidences = neuralNet.compute(inputs);
 
-//            for(int j = 0; j < confidences.length; j++) {
-//                System.out.format("%.5f,",confidences[j]);
-//            }
-            System.out.println(confidences.length);
-            
+
             double predictedValue, confidence;
             
             confidence = -1;
