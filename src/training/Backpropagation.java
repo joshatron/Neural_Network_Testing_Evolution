@@ -29,7 +29,7 @@ public class Backpropagation implements Trainer
     @Override
     public FeedForwardNeuralNetwork run(FeedForwardNeuralNetwork net, double[][] examples)
     {
-        System.out.println("Starting backprop");
+        /*System.out.println("Starting backprop");
         lastDeltas = new double[net.getWeights().length];
         learningRate = parameters[0];
         momentum = parameters[1];
@@ -55,7 +55,7 @@ public class Backpropagation implements Trainer
                 //run backprop on it
                 backprop(input, output, net);
             }
-        }
+        }*/
 
         double[] weights = net.getWeights();
         for(int i = 0; i < weights.length; i++)
