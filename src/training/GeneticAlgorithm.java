@@ -218,13 +218,12 @@ public double[][] select(int populationSize, double[][] currentPop, double[][] e
             //System.out.println(examples[i][len]);
             if (index == examples[i][len])
             {
-//                System.out.println("We were correct!");
-                //score += bestConfidence;
+//                System.out.println(index);
+//                System.out.println(examples[i][len]);
                 score += 1;
             }
             else if (bestConfidence > 0)
             {
-//                System.out.println("%%%%%%%%%%%%%%%%%%%%%");
                 score += Math.exp(-1 * bestConfidence);
             }
         }
