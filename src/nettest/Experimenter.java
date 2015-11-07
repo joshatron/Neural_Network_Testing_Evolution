@@ -115,7 +115,12 @@ public class Experimenter {
         for (int i = 0; i < datasetA.length; i++) {
             int classIndex = datasetA[i].length - 1;
             double trueValue = datasetA[i][classIndex];
-            double[] confidences = neuralNet.compute(datasetA[i]);
+            double[] inputs = new double[datasetA[i].length - 1];
+            for(int j = 0; j < inputs.length; j++)
+            {
+                inputs[j] = datasetA[i][j];
+            }
+            double[] confidences = neuralNet.compute(inputs);
             
             double predictedValue, confidence;
             
@@ -147,8 +152,13 @@ public class Experimenter {
         for (int i = 0; i < datasetB.length; i++) {
             int classIndex = datasetB[i].length - 1;
             double trueValue = datasetB[i][classIndex];
-            double[] confidences = neuralNet.compute(datasetB[i]);
-            
+            double[] inputs = new double[datasetB[i].length - 1];
+            for(int j = 0; j < inputs.length; j++)
+            {
+                inputs[j] = datasetB[i][j];
+            }
+            double[] confidences = neuralNet.compute(inputs);
+
             double predictedValue, confidence;
             
             confidence = -1;
