@@ -47,12 +47,14 @@ public class Main
      * [3] => mutation rate
      * [4] => cross over rate
      * [5] => crossover Type
+     *
+     *  18
      */
-    public static double[] MLParams = {
-            25,
+    public static double[] ESParams = {
             50,
             100,
-            0.01,
+            1000,
+            0.5,
             0.1,
             0
     };
@@ -85,13 +87,12 @@ public class Main
      * [6] => crossover Type
      */
     public static double[] GAParams = {
-            50,
             100,
-            0.01,
+            100,
             0.1,
+            0.2,
             50,
-            5,
-            0
+            1
     };
     
     /**
@@ -99,6 +100,10 @@ public class Main
      * respective array and select set the fileIndex variable to the index of 
      * the desired dataset (described above).
      * @param args the command line arguments
+     *
+     *             4.205607476635514
+     *             31.682242990654203
+     *             37.47663551401869
      */
     public static void main(String[] args)
     {
@@ -106,14 +111,14 @@ public class Main
         
         // Initialize Trainer(s)
         Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
-        Trainer muLambdaEvolution = new MuLambdaEvolution(MLParams); 
+        Trainer muLambdaEvolution = new MuLambdaEvolution(ESParams);
         Trainer differentialEvolution = new DifferentialEvolution(DEParams);
         Trainer backpropagation = new Backpropagation(BackpropParams); 
         
         Trainer[] trainers = new Trainer[] {
-//            geneticAlgorithim,
+            geneticAlgorithim,
 //            muLambdaEvolution,
-            differentialEvolution,
+//            differentialEvolution,
 //            backpropagation,
         };
         

@@ -21,53 +21,49 @@ public class GeneticAlgorithm implements Trainer
     /**
      * This method initializes the GA population using random values
      */
-    public double[][] initialize(int populationSize, int numbOfWeights)
+    public double[][] initialize(int populationSize)
     {
-        double[][] population = new double[populationSize][numbOfWeights];
+        double[][] population = new double[populationSize][];
 
         for (int i = 0; i < populationSize; i++)
         {
             this.net.generateRandomWeights();
             population[i] = this.net.getWeights();
-//            for (int j = 0; j < numbOfWeights; j++)
-//            {
-//                population[i][j] = Math.random() * 2 - 1;
-//            }
         }
 
         return population;
     }
 
     /**
-     * This method selects individuals from the population to
-     * reproduce
-     */
-    public double[][] select(int populationSize, double[][] currentPop, double[][] examples)
+ * This method selects individuals from the population to
+ * reproduce
+ */
+public double[][] select(int populationSize, double[][] currentPop, double[][] examples)
+{
+    double[] values = new double[currentPop.length];
+    double[][] children = new double[populationSize][currentPop[0].length];
+
+    for (int i = 0; i < currentPop.length; i++)
     {
-        double[] values = new double[currentPop.length];
-        double[][] children = new double[populationSize][currentPop[0].length];
-
-        for (int i = 0; i < currentPop.length; i++)
-        {
-            values[i] = fitnessFunction(currentPop[i], examples);
-        }
-
-        int numbOfChildren = 0;
-        int currentParent = 0;
-
-        while (numbOfChildren < populationSize)
-        {
-            if (Math.random() < values[currentParent])
-            {
-                children[numbOfChildren] = currentPop[currentParent];
-                numbOfChildren++;
-            }
-
-            currentParent = (currentParent + 1) % currentPop.length;
-        }
-
-        return children;
+        values[i] = fitnessFunction(currentPop[i], examples);
     }
+
+    int numbOfChildren = 0;
+    int currentParent = 0;
+
+    while (numbOfChildren < populationSize)
+    {
+        if (Math.random() < values[currentParent])
+        {
+            children[numbOfChildren] = currentPop[currentParent];
+            numbOfChildren++;
+        }
+
+        currentParent = (currentParent + 1) % currentPop.length;
+    }
+
+    return children;
+}
 
     /**
      * This method runs the various operators on the Children
@@ -295,7 +291,6 @@ public class GeneticAlgorithm implements Trainer
      * [2] => mutation rate
      * [3] => cross over rate
      * [4] => populationSize
-     * [5] => # of weights
      * [6] => crossover Type
      *
      * @return
@@ -309,8 +304,7 @@ public class GeneticAlgorithm implements Trainer
         double mutationRate = parameters[2];
         double crossoverRate = parameters[3];
         int poopulationSize = (int) parameters[4];
-        int numbOfWeights = net.getWeights().length;
-        int crossoverType = (int) parameters[6];
+        int crossoverType = (int) parameters[5];
         double[][][] paritionedExamples = new double[10][examples.length / 10][];
 
         for (int i = 0; i < 10; i++)
@@ -321,7 +315,7 @@ public class GeneticAlgorithm implements Trainer
             }
         }
 
-        double[][] population = initialize(poopulationSize, numbOfWeights);
+        double[][] population = initialize(poopulationSize);
 
         for (int i = 0; i < generations; i++)
         {

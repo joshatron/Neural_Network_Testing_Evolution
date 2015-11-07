@@ -148,7 +148,7 @@ public class DifferentialEvolution extends GeneticAlgorithm
             }
         }
 
-        double[][] population = initialize(populationSize, numbOfWeights);
+        double[][] population = initialize(populationSize);
 
         for (int i = 0; i < generations; i++)
         {

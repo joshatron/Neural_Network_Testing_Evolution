@@ -11,6 +11,22 @@ public class MuLambdaEvolution extends GeneticAlgorithm
     }
 
     /**
+     * This method initializes the GA population using random values
+     */
+    public double[][] initialize(int populationSize)
+    {
+        double[][] population = new double[populationSize][];
+
+        for (int i = 0; i < populationSize; i++)
+        {
+            this.net.generateRandomWeights();
+            population[i] = this.net.getWeights();
+        }
+
+        return population;
+    }
+
+    /**
      * This method selects individuals from the population to
      * reproduce
      */
@@ -56,8 +72,6 @@ public class MuLambdaEvolution extends GeneticAlgorithm
     public double[][] Replace(double[][] population, int size, double[][] examples)
     {
         double[][] newPop = new double[size][population[0].length];
-        int currentSize = 0;
-        int index = 0;
         double[] scores = new double[population.length];
 
         for (int i = 0; i < population.length; i++)
@@ -65,15 +79,26 @@ public class MuLambdaEvolution extends GeneticAlgorithm
             scores[i] = fitnessFunction(population[i], examples);
         }
 
-        while (currentSize < size)
+        for (int i = 0; i < population.length; i++)
         {
-            if (Math.random() < scores[index])
+            for (int j = i; j < population.length; j++)
             {
-                newPop[currentSize] = population[index];
-                currentSize++;
-            }
+                if (scores[j] > scores[i])
+                {
+                    double tempValue = scores[i];
+                    scores[i] = scores[j];
+                    scores[i] = tempValue;
 
-            index = (index + 1) % scores.length;
+                    double[] temp = population[i];
+                    population[i] = population[j];
+                    population[j] = temp;
+                }
+            }
+        }
+
+        for (int i = 0; i < size; i++)
+        {
+            newPop[i] = population[i];
         }
 
         return newPop;
@@ -114,7 +139,7 @@ public class MuLambdaEvolution extends GeneticAlgorithm
             }
         }
 
-        double[][] population = initialize(mu, numbOfWeights);
+        double[][] population = initialize(mu);
 
         for (int i = 0; i < generations; i++)
         {

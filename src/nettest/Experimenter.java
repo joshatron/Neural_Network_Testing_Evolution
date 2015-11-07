@@ -50,6 +50,9 @@ public class Experimenter {
             for (int i = 0; i < 5; i++) {
                 percentsCorrect[i] = ( results[i][0].percentCorrect() +
                                        results[i][1].percentCorrect() ) / 2;
+
+                System.out.println("Percent Correct: " + results[i][0].percentCorrect());
+                System.out.println("Percent Correct: " + results[i][1].percentCorrect());
                 
                 percentCorrect += percentsCorrect[i];
                 
@@ -65,7 +68,7 @@ public class Experimenter {
             long end = System.currentTimeMillis();
             
             System.out.println("Trainer: " + trainer.toString());
-            System.out.println("Percent correct: " + (percentCorrect * 100));
+            System.out.println("Average Percent correct: " + (percentCorrect * 100));
             System.out.println("Mean confidence: " + averageConfidence);
             System.out.println("Average run time: " + (end - startTime) / 10 + "ms");
         }
