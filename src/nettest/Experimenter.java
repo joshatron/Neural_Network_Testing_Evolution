@@ -51,8 +51,8 @@ public class Experimenter {
                 percentsCorrect[i] = ( results[i][0].percentCorrect() +
                                        results[i][1].percentCorrect() ) / 2;
 
-                System.out.println("Percent Correct: " + results[i][0].percentCorrect());
-                System.out.println("Percent Correct: " + results[i][1].percentCorrect());
+                System.out.println("Percent Correct: " + results[i][0].percentCorrect() * 100);
+                System.out.println("Percent Correct: " + results[i][1].percentCorrect() * 100);
                 
                 percentCorrect += percentsCorrect[i];
                 

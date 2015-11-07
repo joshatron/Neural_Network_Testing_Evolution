@@ -116,8 +116,8 @@ public class Main
         Trainer backpropagation = new Backpropagation(BackpropParams); 
         
         Trainer[] trainers = new Trainer[] {
-            geneticAlgorithim,
-//            muLambdaEvolution,
+//            geneticAlgorithim,
+            muLambdaEvolution,
 //            differentialEvolution,
 //            backpropagation,
         };
