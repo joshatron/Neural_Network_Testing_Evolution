@@ -1,6 +1,5 @@
 package training;
 
-import com.sun.tools.javac.jvm.Gen;
 import feedforward.FeedForwardNeuralNetwork;
 
 public class GeneticAlgorithm implements Trainer

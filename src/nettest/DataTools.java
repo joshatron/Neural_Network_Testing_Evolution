@@ -14,7 +14,6 @@ import java.util.Scanner;
 public class DataTools {
     
     private static final java.util.Random rand = new java.util.Random();
-
     /**
      * Set the specified column as the class attribute, making it the last column.
      * @param dataset
@@ -134,6 +133,8 @@ public class DataTools {
                 break;
         }
         
+        data = incrementalClasses(data);
+        
         return data;
     }
     
@@ -199,6 +200,29 @@ public class DataTools {
         }
         
         return new double[][][] { trainingData, testingData };
+    }
+    
+    public static double[][] incrementalClasses(double[][] dataset) {
+        ArrayList<Double> values = new ArrayList<>();
+        double counter = 0.0;
+        for (int i = 0; i < dataset.length; i++) {
+            int index = dataset[i].length - 1;
+            if (!values.contains(dataset[i][index])) {
+                values.add(dataset[i][index]);
+                dataset[i][index] = (double) values.indexOf(dataset[i][index]);
+            } else {
+                dataset[i][index] = (double) values.indexOf(dataset[i][index]);
+            }
+        }
+        
+        return dataset;
+    }
+    
+    public static void printData(double[][] data) {
+        
+        for(int i = 0; i < data.length; i++) {
+            System.out.println(data[i][data[i].length - 1]);
+        }
     }
     
     /**
