@@ -5,6 +5,8 @@ import training.*;
 
 import org.json.JSONObject;
 
+import java.util.Arrays;
+
 /**
  * 
  * @author davej
@@ -114,11 +116,7 @@ public class Experimenter {
         for (int i = 0; i < datasetA.length; i++) {
             int classIndex = datasetA[i].length - 1;
             double trueValue = datasetA[i][classIndex];
-            double[] inputs = new double[datasetA[i].length - 1];
-            for(int j = 0; j < inputs.length; j++)
-            {
-                inputs[j] = datasetA[i][j];
-            }
+            double[] inputs = Arrays.copyOfRange(datasetA[i], 0, datasetA[i].length - 1);
             double[] confidences = neuralNet.compute(inputs);
             
             double predictedValue, confidence;
@@ -151,11 +149,7 @@ public class Experimenter {
         for (int i = 0; i < datasetB.length; i++) {
             int classIndex = datasetB[i].length - 1;
             double trueValue = datasetB[i][classIndex];
-            double[] inputs = new double[datasetB[i].length - 1];
-            for(int j = 0; j < inputs.length; j++)
-            {
-                inputs[j] = datasetB[i][j];
-            }
+            double[] inputs = Arrays.copyOfRange(datasetB[i], 0, datasetB[i].length - 1);
             double[] confidences = neuralNet.compute(inputs);
             double predictedValue, confidence;
             
