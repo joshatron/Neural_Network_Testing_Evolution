@@ -109,7 +109,7 @@ public class Main
      */
     public static void main(String[] args)
     {
-        int fileIndex = 1;  // Specify the file to use (see file array)
+        int fileIndex = 4;  // Specify the file to use (see file array)
         
         // Initialize Trainer(s)
         Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
@@ -118,9 +118,9 @@ public class Main
         Trainer backpropagation = new Backpropagation(BackpropParams); 
         
         Trainer[] trainers = new Trainer[] {
-//            geneticAlgorithim,
-//            muLambdaEvolution,
-//            differentialEvolution,
+            geneticAlgorithim,
+            muLambdaEvolution,
+            differentialEvolution,
             backpropagation,
         };
         
