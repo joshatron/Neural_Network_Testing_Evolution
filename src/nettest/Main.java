@@ -53,7 +53,7 @@ public class Main
     public static double[] ESParams = {
             50,
             100,
-            1000,
+            100,
             0.5,
             0.1,
             0
@@ -109,7 +109,7 @@ public class Main
      */
     public static void main(String[] args)
     {
-        int fileIndex = 0;  // Specify the file to use (see file array)
+        int fileIndex = 2;  // Specify the file to use (see file array)
         
         // Initialize Trainer(s)
         Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
@@ -119,9 +119,9 @@ public class Main
         
         Trainer[] trainers = new Trainer[] {
 //            geneticAlgorithim,
-//            muLambdaEvolution,
-//            differentialEvolution,
-            backpropagation,
+            muLambdaEvolution,
+//m            differentialEvolution,
+//            backpropagation,
         };
         
         

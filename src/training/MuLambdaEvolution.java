@@ -127,7 +127,6 @@ public class MuLambdaEvolution extends GeneticAlgorithm
         int generations = (int) parameters[2];
         double mutationRate = parameters[3];
         double crossoverRate = parameters[4];
-        int numbOfWeights = net.getWeights().length;
         int crossoverType = (int) parameters[5];
         double[][][] paritionedExamples = new double[10][examples.length / 10][];
 
@@ -157,6 +156,17 @@ public class MuLambdaEvolution extends GeneticAlgorithm
 
         //System.out.println("Picking best GA chromosome");
         net.setWeights(getBestWeights(population, examples));
+
+        double[] weights = net.getWeights();
+        double averageWeight = 0.0;
+        for(int i = 0; i < weights.length; i++)
+        {
+            System.out.print(weights[i] + ", ");
+
+            averageWeight += Math.abs(weights[i]) / weights.length;
+        }
+        System.out.println();
+        System.out.println("Average weight: " + averageWeight);
 
         return net;
     }

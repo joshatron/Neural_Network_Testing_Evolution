@@ -2,6 +2,8 @@ package training;
 
 import feedforward.FeedForwardNeuralNetwork;
 
+import java.util.Arrays;
+
 public class GeneticAlgorithm implements Trainer
 {
     double[] parameters;
@@ -193,7 +195,8 @@ public double[][] select(int populationSize, double[][] currentPop, double[][] e
         for (int i = 0; i < Math.min(examples.length, 100); i++)
         {
             trials++;
-            double[] confidences = this.net.compute(examples[i]);
+            double[] newExamples = Arrays.copyOfRange(examples[i], 0, examples[i].length-1);
+            double[] confidences = this.net.compute(newExamples);
             int len = examples[i].length - 1;
 
             int index = 0;
