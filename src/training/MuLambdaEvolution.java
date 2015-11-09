@@ -134,7 +134,7 @@ public class MuLambdaEvolution extends GeneticAlgorithm
         {
             for (int j = 0; j < examples.length / 10; j++)
             {
-                paritionedExamples[i][j] = examples[i*10 + j];
+                paritionedExamples[i][j] = examples[(i*10 + j) % examples.length];
             }
         }
 

@@ -2,6 +2,7 @@ package training;
 
 import feedforward.FeedForwardNeuralNetwork;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class GeneticAlgorithm implements Trainer
@@ -195,8 +196,8 @@ public double[][] select(int populationSize, double[][] currentPop, double[][] e
         for (int i = 0; i < Math.min(examples.length, 100); i++)
         {
             trials++;
-            double[] newExamples = Arrays.copyOfRange(examples[i], 0, examples[i].length-1);
-            double[] confidences = this.net.compute(newExamples);
+            double[] inputs = Arrays.copyOfRange(examples[i], 0, examples[i].length - 1);
+            double[] confidences = this.net.compute(inputs);
             int len = examples[i].length - 1;
 
             int index = 0;
@@ -312,7 +313,7 @@ public double[][] select(int populationSize, double[][] currentPop, double[][] e
         {
             for (int j = 0; j < examples.length / 10; j++)
             {
-                paritionedExamples[i][j] = examples[i*10 + j];
+                paritionedExamples[i][j] = examples[(i*10 + j) % examples.length];
             }
         }
 

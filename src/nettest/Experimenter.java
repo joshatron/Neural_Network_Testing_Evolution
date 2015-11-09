@@ -88,6 +88,7 @@ public class Experimenter {
         for (int i = 0; i < 5; i++) {
             double[][][] datasets = DataTools.partitionData(dataset);
             results[i] = crossValidate(trainer, datasets[0], datasets[1]);
+            System.out.println("Completed round: " + i + "of crossValidation");
         }
         
         return results;
@@ -149,9 +150,8 @@ public class Experimenter {
         for (int i = 0; i < datasetB.length; i++) {
             int classIndex = datasetB[i].length - 1;
             double trueValue = datasetB[i][classIndex];
-            double[] values = Arrays.copyOfRange(datasetB[i], 0, datasetB[i].length - 1);
-            double[] confidences = neuralNet.compute(values);
-            
+            double[] inputs = Arrays.copyOfRange(datasetB[i], 0, datasetB[i].length - 1);
+            double[] confidences = neuralNet.compute(inputs);
             double predictedValue, confidence;
             
             confidence = -1;
