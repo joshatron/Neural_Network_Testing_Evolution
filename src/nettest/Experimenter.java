@@ -39,10 +39,9 @@ public class Experimenter {
      * @param dataset  Array of different datasets to test.
      */
     public void run(double[][] dataset) {
-        double[][][] partitionedData = DataTools.partitionData(dataset);
         for (Trainer trainer : trainers) {
             long startTime = System.currentTimeMillis();
-            Results[][] results = test(trainer,partitionedData);
+            Results[][] results = test(trainer,dataset);
             double[] percentsCorrect = new double[5];
             double[] averageConfidences = new double[5];
             
@@ -64,8 +63,8 @@ public class Experimenter {
                 averageConfidence += averageConfidences[i];
             }
             
-            percentCorrect /= 5;
-            averageConfidence /= 5;
+            percentCorrect /= 5.0;
+            averageConfidence /= 5.0;
 
             long end = System.currentTimeMillis();
             
@@ -81,13 +80,13 @@ public class Experimenter {
      * Returns one pair of Results objects for every iteration of cross
      * validation, for a total of 5 pairs.
      * @param trainer   Trainer used to train the neural network
-     * @param datasets  Training and testing datasets for cross validation
+     * @param dataset  Training and testing datasets for cross validation
      * @return Results[5][2], 5 pairs of Results objects.
      */
-    public Results[][] test(Trainer trainer, double[][][] datasets) {
+    public Results[][] test(Trainer trainer, double[][] dataset) {
         Results[][] results = new Results[5][];
-        
         for (int i = 0; i < 5; i++) {
+            double[][][] datasets = DataTools.partitionData(dataset);
             results[i] = crossValidate(trainer, datasets[0], datasets[1]);
         }
         

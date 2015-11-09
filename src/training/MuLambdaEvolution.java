@@ -159,14 +159,14 @@ public class MuLambdaEvolution extends GeneticAlgorithm
 
         double[] weights = net.getWeights();
         double averageWeight = 0.0;
-        for(int i = 0; i < weights.length; i++)
-        {
-            System.out.print(weights[i] + ", ");
-
-            averageWeight += Math.abs(weights[i]) / weights.length;
-        }
-        System.out.println();
-        System.out.println("Average weight: " + averageWeight);
+//        for(int i = 0; i < weights.length; i++)
+//        {
+//            System.out.print(weights[i] + ", ");
+//
+//            averageWeight += Math.abs(weights[i]) / weights.length;
+//        }
+//        System.out.println();
+//        System.out.println("Average weight: " + averageWeight);
 
         return net;
     }
