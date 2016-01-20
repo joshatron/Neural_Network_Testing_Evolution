@@ -1,10 +1,13 @@
 package nettest;
 
-import java.io.File;
-import training.*;
-import org.json.JSONObject;
+import feedforward.ActivationFunction;
+import feedforward.FeedForwardNeuralNetwork;
 import org.apache.commons.io.FileUtils;
-import feedforward.*;
+import org.json.JSONObject;
+import training.Backpropagation;
+import training.Trainer;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -41,36 +44,6 @@ public class Main
 
 
     /**
-     * [0] => Mu
-     * [1] => Lamda
-     * [2] => # of generations
-     * [3] => mutation rate
-     * [4] => cross over rate
-     * [5] => crossover Type
-     *
-     *  18
-     */
-    public static double[] ESParams = {
-            50,
-            100,
-            800,
-            0.5,
-            0.1,
-            0
-    };
-    
-    /**
-     * [0] => populationSize
-     * [1] => # of generations
-     * [2] => Beta
-     */
-    public static double[] DEParams = {
-        75,
-        850,
-        0.1
-    };
-    
-    /**
      * [0] => learning rate
      * [1] => momentum
      */
@@ -78,25 +51,7 @@ public class Main
         .01,
         .1
     };
-    
-    /**
-     * [0] => # of children
-     * [1] => # of generations
-     * [2] => mutation rate
-     * [3] => cross over rate
-     * [4] => populationSize
-     * [5] => # of weights
-     * [6] => crossover Type
-     */
-    public static double[] GAParams = {
-            100,
-            900,
-            0.1,
-            0.2,
-            50,
-            1
-    };
-    
+
     /**
      * To run a specific training algorithm, specify its parameters in its
      * respective array and select set the fileIndex variable to the index of 
@@ -109,18 +64,12 @@ public class Main
      */
     public static void main(String[] args)
     {
-        int fileIndex = 6;  // Specify the file to use (see file array)
+        int fileIndex = 0;  // Specify the file to use (see file array)
         
         // Initialize Trainer(s)
-        Trainer geneticAlgorithim = new GeneticAlgorithm(GAParams);
-        Trainer muLambdaEvolution = new MuLambdaEvolution(ESParams);
-        Trainer differentialEvolution = new DifferentialEvolution(DEParams);
-        Trainer backpropagation = new Backpropagation(BackpropParams); 
+        Trainer backpropagation = new Backpropagation(BackpropParams);
         
         Trainer[] trainers = new Trainer[] {
-            geneticAlgorithim,
-            muLambdaEvolution,
-            differentialEvolution,
             backpropagation,
         };
         
@@ -150,7 +99,7 @@ public class Main
                     values.add(value);
                 }
             }
-            FeedForwardNeuralNetwork neuralNet = new FeedForwardNeuralNetwork(1, new int[] { dataset[0].length - 1, 100, numOutputs }, ActivationFunction.LOGISTIC, ActivationFunction.LOGISTIC);
+            FeedForwardNeuralNetwork neuralNet = new FeedForwardNeuralNetwork(1, new int[] { dataset[0].length - 1, 10, numOutputs }, ActivationFunction.LOGISTIC, ActivationFunction.LOGISTIC);
             try {
                 neuralNet.export(new File(neuralNetFile[fileIndex]));
             } catch(IOException e2) {
