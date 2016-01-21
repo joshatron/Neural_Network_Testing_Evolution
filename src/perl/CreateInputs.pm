@@ -36,6 +36,7 @@ sub createInputs
     $averageSpawn = ($averageSpawn - $firstSpawn) / $num;
 
 
+
     my @aX = ();
     my @aY = ();
     my @bX = ();
@@ -121,12 +122,25 @@ sub createInputs
     {
         for(my $a = $k + 1; $a < $archons; $a++)
         {
-            $minX = min($aX[$k], $aX[$a])
-            $maxX = max($aX[$k], $aX[$a])
-            $minY = min($aY[$k], $aY[$a])
-            $maxY = max($aY[$k], $aY[$a])
+            $minX = min($aX[$k], $aX[$a]);
+            $maxX = max($aX[$k], $aX[$a]);
+            $minY = min($aY[$k], $aY[$a]);
+            $maxY = max($aY[$k], $aY[$a]);
+            for(my $i = 0; $i < $archons; $i++)
+            {
+                if($bX[$i] >= $minX && $bX[$i] <= $maxX && $bY[$i] >= $minY && $bY[$i] <= $maxX)
+                {
+                    $blocking = 1;
+                }
+            }
         }
     }
+
+    #Normalize
+    $firstSpawn = $firstSpawn / 500;
+    $averageSpawn = $averageSpawn / 500;
+    $averageDist = $averageDist / 6400;
+    $size = $size / 3200;
 
     return ($firstSpawn, $averageSpawn, $averageDist, $size, $blocking);
 }

@@ -2,18 +2,27 @@ use strict;
 use warnings;
 use XML::Simple;
 use CreateInputs;
+use Data::Dumper;
 
-opendir(DIR, $ARGV[0]) || die "Can't open directory!";
-my @list = readdir(DIR);
-closedir(DIR);
+my $winnersFile = $ARGV[0];
+my $mapsDir = $ARGV[1];
 
-foreach my $xml (@list)
+my $newfile = "dataset.csv";
+open(OUTFILE, ">", $newfile) or die "File write failed on: $newfile\n";
+
+open(my $fh, '<', $winnersFile) or die "Can't open $winnersFile: $!";
+
+while ( my $line = <$fh> )
 {
-    if($xml =~ m/arena\.xml$/)
+    chomp $line;
+    (my $xml, my $winner) = split /,/, $line;
+    my $file = "$mapsDir$xml";
+    my $map = XMLin($file);
+    my @inputs = createInputs($map);
+    foreach my $input (@inputs)
     {
-        my $file = "$ARGV[0]$xml";
-        my $map = XMLin($file);
-        createInputs($map);
+        print OUTFILE "$input,";
     }
+    print OUTFILE "$winner\n";
 }
 
