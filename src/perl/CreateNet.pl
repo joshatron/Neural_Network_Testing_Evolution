@@ -1,4 +1,4 @@
-package net;
+package CreateNet;
 
 use strict;
 use warnings;
