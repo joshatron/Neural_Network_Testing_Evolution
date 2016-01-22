@@ -22,8 +22,8 @@ foreach my $file (@ARGV)
     push(@hashes, $hash);
 }
 
-my $newfile = "MapsAndWinners.csv";
-open(OUTFILE, ">", $newfile) or die "File write failed on: $newfile\n";
+my $newFile = "MapsAndWinners.csv";
+open(OUTFILE, ">", $newFile) or die "File write failed on: $newFile\n";
 
 my @keys = keys %{$hashes[0]};
 
@@ -31,15 +31,24 @@ foreach my $key (@keys)
 {
     my $maxWins = -1;
     my $maxIndex = -1;
+    my $multiple = 0;
     for(my $k = 0; $k < scalar @hashes; $k++)
     {
         if($hashes[$k]->{$key} > $maxWins)
         {
             $maxWins = $hashes[$k]->{$key};
             $maxIndex = $k;
+            $multiple = 0;
+        }
+        elsif($hashes[$k]->{$key} == $maxWins)
+        {
+            $multiple = 1;
         }
     }
-    print OUTFILE "$key,$maxIndex\n";
+    if($multiple == 0)
+    {
+        print OUTFILE "$key,$maxIndex\n";
+    }
 }
 
 close OUTFILE;

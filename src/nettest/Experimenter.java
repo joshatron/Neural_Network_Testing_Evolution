@@ -88,7 +88,7 @@ public class Experimenter {
         for (int i = 0; i < 5; i++) {
             double[][][] datasets = DataTools.partitionData(dataset);
             results[i] = crossValidate(trainer, datasets[0], datasets[1]);
-            System.out.println("Completed round: " + i + "of crossValidation");
+            System.out.println("Completed round: " + i + " of crossValidation");
         }
         
         return results;

@@ -36,7 +36,7 @@ public class Backpropagation implements Trainer
 
         int[] sizes = net.getSizes();
 
-        int value = 1700000 / examples.length;
+        int value = 170000 / examples.length;
         for(int i = 0; i < value + 1; i++)
         {
             //for each example

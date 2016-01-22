@@ -17,12 +17,15 @@ while ( my $line = <$fh> )
     chomp $line;
     (my $xml, my $winner) = split /,/, $line;
     my $file = "$mapsDir$xml";
-    my $map = XMLin($file);
-    my @inputs = createInputs($map);
-    foreach my $input (@inputs)
+    if(-e $file)
     {
-        print OUTFILE "$input,";
+        my $map = XMLin($file);
+        my @inputs = createInputs($map);
+        foreach my $input (@inputs)
+        {
+            print OUTFILE "$input,";
+        }
+        print OUTFILE "$winner\n";
     }
-    print OUTFILE "$winner\n";
 }
 

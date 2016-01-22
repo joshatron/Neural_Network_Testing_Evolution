@@ -2,13 +2,10 @@ package nettest;
 
 import feedforward.ActivationFunction;
 import feedforward.FeedForwardNeuralNetwork;
-import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import training.Backpropagation;
 import training.Trainer;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main
@@ -21,6 +18,7 @@ public class Main
     // Array of every file name
     public static String[] dataFile = {//                Index | Description
         "data/600_set1.csv",//---------------------------> 0   | 600 sets run before seeding tournament
+        "data/netRun1.csv",//----------------------------> 1   | run of a pure turtle bot vs a pure rush bot
     };
 
 
@@ -46,7 +44,7 @@ public class Main
      */
     public static void main(String[] args)
     {
-        int fileIndex = 0;  // Specify the file to use (see file array)
+        int fileIndex = 1;  // Specify the file to use (see file array)
         
         // Initialize Trainer(s)
         Trainer backpropagation = new Backpropagation(BackpropParams);
@@ -64,33 +62,23 @@ public class Main
         double[][] dataset = DataTools.getDataFromFile(dataFile[fileIndex]);
         
         // Load the initial neural net into a JSONObject.
-        File initialNet = new File(neuralNetFile[fileIndex]);
         JSONObject json;
-        try {
-            json = new JSONObject(FileUtils.readFileToString(initialNet));
-        } catch (java.io.IOException e1) {
-            
-            int index = dataset[0].length - 1;
-            int numOutputs = 0;
-            ArrayList<Double> values = new ArrayList<>();
-            
-            for (int i = 0; i < dataset.length; i++) {
-                Double value = dataset[i][index];
-                if (!values.contains(value)) {
-                    numOutputs++;
-                    values.add(value);
-                }
+
+        int index = dataset[0].length - 1;
+        int numOutputs = 0;
+        ArrayList<Double> values = new ArrayList<>();
+
+        for (int i = 0; i < dataset.length; i++) {
+            Double value = dataset[i][index];
+            if (!values.contains(value)) {
+                numOutputs++;
+                values.add(value);
             }
-            FeedForwardNeuralNetwork neuralNet = new FeedForwardNeuralNetwork(1, new int[] { dataset[0].length - 1, 10, numOutputs }, ActivationFunction.LOGISTIC, ActivationFunction.LOGISTIC);
-            try {
-                neuralNet.export(new File(neuralNetFile[fileIndex]));
-            } catch(IOException e2) {
-                System.err.println(e2.getMessage());
-            }
-            
-            json = neuralNet.export();
         }
-        
+        FeedForwardNeuralNetwork neuralNet = new FeedForwardNeuralNetwork(1, new int[] { dataset[0].length - 1, 100, numOutputs }, ActivationFunction.LOGISTIC, ActivationFunction.LOGISTIC);
+
+        json = neuralNet.export();
+
         // Initialize Experimenter
         Experimenter experiment = new Experimenter(json, trainers);
         
